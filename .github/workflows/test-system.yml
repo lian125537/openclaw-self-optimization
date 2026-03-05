@@ -1,0 +1,59 @@
+name: Test System
+
+on:
+  schedule:
+    # 每天凌晨 2 点运行（北京时间上午 10 点）
+    - cron: '0 18 * * *'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        
+    - name: Run system test
+      run: |
+        python scripts/test-system.py
+        
+    - name: Upload test report
+      uses: actions/upload-artifact@v3
+      with:
+        name: system-test-report
+        path: |
+          data/system-test-report.json
+          docs/system-test-report.md
+          
+    - name: Create GitHub Issue
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('docs/system-test-report.md', 'utf8');
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `系统测试报告 - ${new Date().toISOString().split('T')[0]}`,
+            body: report,
+            labels: ['测试', '自动化']
+          });
+          
+    - name: Send notification
+      if: success()
+      run: |
+        echo "系统测试完成！"
+        echo "报告已上传到 GitHub Actions Artifacts"
+        echo "新 Issue 已创建"
