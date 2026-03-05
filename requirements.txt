@@ -1,0 +1,13 @@
+# OpenClaw 自我优化系统依赖
+
+# 基础依赖
+requests>=2.28.0
+python-dotenv>=0.21.0
+
+# 数据处理
+pandas>=1.5.0
+numpy>=1.23.0
+
+# 可选依赖
+# matplotlib>=3.6.0  # 用于图表生成
+# seaborn>=0.12.0    # 用于数据可视化

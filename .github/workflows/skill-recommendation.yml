@@ -1,0 +1,59 @@
+name: Skill Recommendation
+
+on:
+  workflow_dispatch:  # 手动触发
+  schedule:
+    # 每周三和周六运行（北京时间上午 10 点）
+    - cron: '0 18 * * 3,6'
+
+jobs:
+  recommend:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        
+    - name: Run skill recommendation
+      run: |
+        python scripts/recommend-skills.py
+        
+    - name: Upload recommendation report
+      uses: actions/upload-artifact@v3
+      with:
+        name: skill-recommendations
+        path: |
+          data/skill-recommendations.json
+          docs/skill-recommendations.md
+          
+    - name: Create GitHub Issue
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('docs/skill-recommendations.md', 'utf8');
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `技能推荐报告 - ${new Date().toISOString().split('T')[0]}`,
+            body: report,
+            labels: ['技能推荐', '自动化']
+          });
+          
+    - name: Send notification
+      if: success()
+      run: |
+        echo "技能推荐完成！"
+        echo "报告已上传到 GitHub Actions Artifacts"
+        echo "新 Issue 已创建"

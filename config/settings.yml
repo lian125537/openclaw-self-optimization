@@ -1,0 +1,102 @@
+# OpenClaw 自我优化系统配置
+
+# GitHub 配置
+github:
+  username: ""  # 你的 GitHub 用户名
+  token: ""     # GitHub Personal Access Token (repo, workflow 权限)
+  repository: "openclaw-self-optimization"  # 仓库名称
+
+# 自动化配置
+automation:
+  # 分析频率
+  analysis_schedule: "0 18 * * *"  # 每天 UTC 18:00 (北京时间 02:00)
+  
+  # 推荐频率
+  recommendation_schedule: "0 18 * * 3,6"  # 每周三、六 UTC 18:00
+  
+  # 安装频率
+  install_schedule: "0 18 * * 1,4"  # 每周一、四 UTC 18:00
+  
+  # 自动安装阈值
+  auto_install_threshold: "high"  # high/medium/low/all
+  
+  # 用户确认
+  require_confirmation: true  # 是否需要用户确认安装
+
+# 通知配置
+notifications:
+  telegram:
+    bot_token: ""  # Telegram Bot Token
+    chat_id: ""    # Telegram Chat ID
+    
+  email:
+    enabled: false
+    smtp_server: ""
+    smtp_port: 587
+    username: ""
+    password: ""
+    to_email: ""
+
+# 能力追踪
+capability_tracking:
+  metrics:
+    - skill_count
+    - skill_usage
+    - task_success_rate
+    - response_time
+    - automation_level
+    
+  # 报告生成
+  report_frequency: "daily"  # daily/weekly/monthly
+  
+  # 数据保留
+  data_retention_days: 90
+
+# 技能推荐
+skill_recommendation:
+  # 推荐算法
+  algorithm: "pattern_based"  # pattern_based/machine_learning/hybrid
+  
+  # 优先级阈值
+  priority_thresholds:
+    high: 0.8    # 使用频率 > 80%
+    medium: 0.5  # 使用频率 > 50%
+    low: 0.2     # 使用频率 > 20%
+    
+  # 排除技能
+  exclude_skills:
+    - "experimental"
+    - "deprecated"
+
+# 系统配置
+system:
+  # 日志级别
+  log_level: "INFO"  # DEBUG/INFO/WARNING/ERROR
+  
+  # 超时设置
+  timeout:
+    command: 30  # 命令执行超时（秒）
+    api: 10      # API 调用超时（秒）
+    
+  # 重试策略
+  retry:
+    max_attempts: 3
+    delay: 5  # 重试延迟（秒）
+
+# 安全配置
+security:
+  # 权限控制
+  permissions:
+    allow_auto_install: true
+    allow_auto_update: false
+    allow_system_commands: false
+    
+  # 敏感信息
+  sensitive_patterns:
+    - "token"
+    - "password"
+    - "secret"
+    - "key"
+    
+  # 审计日志
+  audit_log: true
