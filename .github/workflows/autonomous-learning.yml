@@ -1,0 +1,77 @@
+name: Autonomous Learning
+
+on:
+  schedule:
+    # 每天凌晨 3 点运行（北京时间上午 11 点）
+    - cron: '0 19 * * *'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        
+    - name: Run autonomous learning
+      run: |
+        python scripts/autonomous-learning.py
+        
+    - name: Upload learning results
+      uses: actions/upload-artifact@v3
+      with:
+        name: autonomous-learning-results
+        path: |
+          data/learning-insights.json
+          data/learning-loop-config.json
+          
+    - name: Create GitHub Issue
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const insights = fs.readFileSync('data/learning-insights.json', 'utf8');
+          const insightsData = JSON.parse(insights);
+          
+          const body = `
+          ## 自主化学习报告
+          
+          **生成时间**: ${new Date().toISOString()}
+          
+          ### 关键发现
+          ${insightsData.key_findings.map(f => `- ${f}`).join('\n')}
+          
+          ### 行动项目
+          ${insightsData.action_items.map(a => `- ${a}`).join('\n')}
+          
+          ### 预期成果
+          - 短期: ${insightsData.expected_outcomes.short_term}
+          - 中期: ${insightsData.expected_outcomes.medium_term}
+          - 长期: ${insightsData.expected_outcomes.long_term}
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `自主化学习报告 - ${new Date().toISOString().split('T')[0]}`,
+            body: body,
+            labels: ['学习', '自主化', '自动化']
+          });
+          
+    - name: Send notification
+      if: success()
+      run: |
+        echo "自主化学习完成！"
+        echo "报告已上传到 GitHub Actions Artifacts"
+        echo "新 Issue 已创建"

@@ -1,0 +1,78 @@
+name: Learning Cycle Shortener
+
+on:
+  schedule:
+    # 每天凌晨 4 点运行（北京时间中午 12 点）
+    - cron: '0 20 * * *'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  shorten:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        
+    - name: Run learning cycle shortener
+      run: |
+        python scripts/learning-cycle-shortener.py
+        
+    - name: Upload cycle results
+      uses: actions/upload-artifact@v3
+      with:
+        name: learning-cycle-results
+        path: |
+          data/shortened-learning-cycle.json
+          
+    - name: Create GitHub Issue
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const cycle = fs.readFileSync('data/shortened-learning-cycle.json', 'utf8');
+          const cycleData = JSON.parse(cycle);
+          
+          const body = `
+          ## 学习周期缩短报告
+          
+          **生成时间**: ${new Date().toISOString()}
+          
+          ### 新学习周期
+          - 周期编号: ${cycleData.cycle_number}
+          - 周期时长: ${cycleData.duration_days} 天
+          
+          ### 学习重点
+          ${cycleData.learning_focus.map(f => `- ${f}`).join('\n')}
+          
+          ### 每日计划
+          ${Object.entries(cycleData.daily_plan).map(([day, plan]) => `- ${day}: ${plan}`).join('\n')}
+          
+          ### 成功标准
+          ${cycleData.success_criteria.map(c => `- ${c}`).join('\n')}
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `学习周期缩短报告 - ${new Date().toISOString().split('T')[0]}`,
+            body: body,
+            labels: ['学习周期', '缩短', '自动化']
+          });
+          
+    - name: Send notification
+      if: success()
+      run: |
+        echo "学习周期缩短完成！"
+        echo "报告已上传到 GitHub Actions Artifacts"
+        echo "新 Issue 已创建"

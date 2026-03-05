@@ -1,0 +1,77 @@
+name: Geometric Growth
+
+on:
+  schedule:
+    # 每周一、四运行（北京时间上午 11 点）
+    - cron: '0 19 * * 1,4'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  grow:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        
+    - name: Run geometric growth
+      run: |
+        python scripts/geometric-growth.py
+        
+    - name: Upload growth results
+      uses: actions/upload-artifact@v3
+      with:
+        name: geometric-growth-results
+        path: |
+          data/growth-strategy.json
+          
+    - name: Create GitHub Issue
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const strategy = fs.readFileSync('data/growth-strategy.json', 'utf8');
+          const strategyData = JSON.parse(strategy);
+          
+          const body = `
+          ## 几何增长策略报告
+          
+          **生成时间**: ${new Date().toISOString()}
+          
+          ### 日常行动
+          ${strategyData.daily_actions.map(a => `- ${a}`).join('\n')}
+          
+          ### 周行动
+          ${strategyData.weekly_actions.map(a => `- ${a}`).join('\n')}
+          
+          ### 月行动
+          ${strategyData.monthly_actions.map(a => `- ${a}`).join('\n')}
+          
+          ### 增长指标
+          ${strategyData.growth_metrics.map(m => `- ${m}`).join('\n')}
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `几何增长策略 - ${new Date().toISOString().split('T')[0]}`,
+            body: body,
+            labels: ['增长', '策略', '自动化']
+          });
+          
+    - name: Send notification
+      if: success()
+      run: |
+        echo "几何增长策略生成完成！"
+        echo "报告已上传到 GitHub Actions Artifacts"
+        echo "新 Issue 已创建"

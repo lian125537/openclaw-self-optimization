@@ -1,0 +1,71 @@
+name: Immediate Action
+
+on:
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        
+    - name: Run immediate action
+      run: |
+        python scripts/immediate-action.py
+        
+    - name: Upload action results
+      uses: actions/upload-artifact@v3
+      with:
+        name: immediate-action-results
+        path: |
+          data/immediate-action-plan.json
+          
+    - name: Create GitHub Issue
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const plan = fs.readFileSync('data/immediate-action-plan.json', 'utf8');
+          const planData = JSON.parse(plan);
+          
+          const body = `
+          ## 立即行动报告
+          
+          **生成时间**: ${new Date().toISOString()}
+          
+          ### 立即行动列表
+          ${planData.immediate_actions.map((a, i) => `${i+1}. ${a.action} (${a.expected_time})`).join('\n')}
+          
+          ### 执行顺序
+          ${planData.execution_order.map((o, i) => `${i+1}. ${o}`).join('\n')}
+          
+          ### 成功标准
+          ${planData.success_criteria.map(c => `- ${c}`).join('\n')}
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `立即行动报告 - ${new Date().toISOString().split('T')[0]}`,
+            body: body,
+            labels: ['立即行动', '自动化']
+          });
+          
+    - name: Send notification
+      if: success()
+      run: |
+        echo "立即行动完成！"
+        echo "报告已上传到 GitHub Actions Artifacts"
+        echo "新 Issue 已创建"
