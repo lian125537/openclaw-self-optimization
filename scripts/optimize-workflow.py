@@ -17,7 +17,7 @@ DOCS_DIR = PROJECT_ROOT / "docs"
 
 def analyze_current_workflow():
     """分析当前工作流"""
-    print("🔍 分析当前工作流...")
+    print("分析当前工作流...")
     
     # 检查 GitHub Actions 工作流
     workflows_dir = PROJECT_ROOT / ".github" / "workflows"
@@ -44,7 +44,7 @@ def analyze_current_workflow():
 
 def analyze_automation_level():
     """分析自动化程度"""
-    print("🔍 分析自动化程度...")
+    print("分析自动化程度...")
     
     analysis = analyze_current_workflow()
     
@@ -63,7 +63,7 @@ def analyze_automation_level():
 
 def generate_optimization_recommendations(analysis):
     """生成优化建议"""
-    print("💡 生成优化建议...")
+    print("生成优化建议...")
     
     recommendations = []
     
@@ -110,7 +110,7 @@ def generate_optimization_recommendations(analysis):
 
 def generate_optimization_plan():
     """生成优化计划"""
-    print("📊 生成优化计划...")
+    print("生成优化计划...")
     
     # 分析当前状态
     analysis = analyze_automation_level()
@@ -156,9 +156,9 @@ def generate_optimization_plan():
 
 ## 🔍 工作流分析
 
-- **总工作流数**: {plan['workflow_analysis']['workflow_analysis']['total_workflows']}
-- **定时工作流**: {plan['workflow_analysis']['workflow_analysis']['scheduled_workflows']}
-- **手动工作流**: {plan['workflow_analysis']['workflow_analysis']['manual_workflows']}
+- **总工作流数**: {plan['workflow_analysis']['total_workflows']}
+- **定时工作流**: {plan['workflow_analysis']['scheduled_workflows']}
+- **手动工作流**: {plan['workflow_analysis']['manual_workflows']}
 
 ## 💡 优化建议
 
@@ -201,8 +201,8 @@ def generate_optimization_plan():
     with open(plan_md_file, 'w', encoding='utf-8') as f:
         f.write(markdown_plan)
     
-    print(f"✅ 优化计划已生成: {plan_file}")
-    print(f"✅ Markdown 计划: {plan_md_file}")
+    print(f"优化计划已生成: {plan_file}")
+    print(f"Markdown 计划: {plan_md_file}")
     
     return plan
 
@@ -220,12 +220,12 @@ def main():
     print("=" * 60)
     
     # 输出关键信息
-    print(f"\n📊 当前状态:")
+    print(f"\n当前状态:")
     print(f"  - 自动化分数: {plan['current_automation_score']:.1f}/100")
     print(f"  - 目标分数: 90/100")
     print(f"  - 差距: {plan['gap']:.1f} 分")
     
-    print(f"\n💡 优化建议:")
+    print(f"\n优化建议:")
     for rec in plan['recommendations'][:3]:
         print(f"  - {rec['type']}: {rec['description']}")
 

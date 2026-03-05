@@ -1,0 +1,178 @@
+{
+  "timestamp": "2026-03-06T03:22:25.095961",
+  "clawhub_skills": [
+    {
+      "query": "openclaw skill",
+      "repos": [
+        "sundial-org/awesome-openclaw-skills\tTop OpenClaw skills, with the most popular and useful ones.\tpublic\t2026-03-05T09:16:34Z",
+        "LeoYeAI/openclaw-master-skills\t🧠 Curated collection of 127+ best OpenClaw skills — weekly updated from skills.sh, GitHub & ClaWHub. Powered by MyClaw.ai\tpublic\t2026-03-05T19:20:06Z",
+        "zscole/model-hierarchy-skill\tOpenClaw skill for cost-optimized model routing based on task complexity\tpublic\t2026-03-05T03:27:54Z",
+        "sharbelxyz/x-bookmarks\tOpenClaw skill: turn your X bookmarks into agent actions. Stop hoarding. Start applying.\tpublic\t2026-03-05T18:25:21Z",
+        "ythx-101/x-tweet-fetcher\t🦞 Fetch tweets and replies from X/Twitter without login or API keys. OpenClaw skill.\tpublic\t2026-03-05T14:12:44Z"
+      ]
+    },
+    {
+      "query": "clawhub skill",
+      "repos": [
+        "dgriffin831/clawhub-skills\tclawhub skills\tpublic\t2026-02-11T01:18:49Z",
+        "kesslerio/camoufox-stealth-browser-clawhub-skill\t🥷 Anti-bot browser automation. Bypasses Cloudflare Turnstile, Datadome, Airbnb, Yelp. Uses Camoufox + Nodriver + curl_cffi.\tpublic\t2026-03-02T02:01:13Z",
+        "strawpot/clawhub_importer\tClawHub Skill Importer\tpublic\t2026-03-05T18:15:49Z",
+        "gongyibo1988-lgtm/clawfleet-console\tMulti-server OpenClaw operations console: monitoring, ClawHub skill install & incremental sync, cross-server copy, and cron visualization.\tpublic\t2026-02-28T05:12:07Z",
+        "LeonardoDpanda/clawhub-skills\tOpenClaw自动生成的高价值Skill模板\tpublic\t2026-03-05T18:23:49Z"
+      ]
+    },
+    {
+      "query": "openclaw automation",
+      "repos": [
+        "digitaltulbo/OpenClaw-automation\tOpenClaw-automation\tpublic\t2026-02-19T15:37:46Z",
+        "Milkyway94/openclaw-automation\tMulti-project Telegram bot automation system - Clean version without exposed credentials\tpublic\t2026-02-09T05:04:19Z",
+        "MeinGutTag/openclaw-automation\tOpenClaw 自动化测试仓库\tpublic\t2026-02-28T16:33:38Z",
+        "imyfmh/openclaw-hello-test-20260303-112911\tOpenClaw automation test repo\tpublic\t2026-03-03T03:29:44Z",
+        "Founderwise/Openclaw-automation-system\tAI assistant write by himself\tpublic\t2026-02-02T16:59:22Z"
+      ]
+    },
+    {
+      "query": "openclaw workflow",
+      "repos": [
+        "kai-tw/openclaw-workflow\tPi Workflow Orchestration Skill\tpublic\t2026-02-26T16:19:59Z",
+        "kaithebot/openclaw-tools\tDevelopment automation toolkit for OpenClaw workflow\tpublic\t2026-02-14T02:15:19Z",
+        "pratik-kamath/OpenClaw-Sandbox\tSanbox repo to test my openclaw workflow\tpublic\t2026-03-05T05:14:18Z",
+        "yunjingyu/ghostrelay-openclaw-patch\tSidecar agent patch for integrating GhostChat with OpenClaw workflows.\tpublic\t2026-02-07T19:37:30Z",
+        "hrikrdo/openclaw-starter-kit\tTemplate completo para nuevas instalaciones de OpenClaw - Workflows, Skills y Guías\tpublic\t2026-02-16T02:20:35Z"
+      ]
+    }
+  ],
+  "best_practices": [
+    {
+      "repo_name": "openclaw/openclaw",
+      "stars": 265077,
+      "forks": 50731,
+      "description": "Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 ",
+      "topics": [
+        "ai",
+        "assistant",
+        "crustacean",
+        "molty",
+        "openclaw",
+        "own-your-data",
+        "personal"
+      ],
+      "structure": {
+        "has_readme": true,
+        "has_workflow": false,
+        "has_scripts": true,
+        "has_config": false,
+        "file_count": 73,
+        "file_list": [
+          ".agent",
+          ".agents",
+          ".detect-secrets.cfg",
+          ".dockerignore",
+          ".env.example",
+          ".gitattributes",
+          ".github",
+          ".gitignore",
+          ".mailmap",
+          ".markdownlint-cli2.jsonc",
+          ".npmrc",
+          ".oxfmtrc.jsonc",
+          ".oxlintrc.json",
+          ".pi",
+          ".pre-commit-config.yaml",
+          ".secrets.baseline",
+          ".shellcheckrc",
+          ".swiftformat",
+          ".swiftlint.yml",
+          ".vscode",
+          "AGENTS.md",
+          "CHANGELOG.md",
+          "CLAUDE.md",
+          "CONTRIBUTING.md",
+          "Dockerfile",
+          "Dockerfile.sandbox",
+          "Dockerfile.sandbox-browser",
+          "Dockerfile.sandbox-common",
+          "LICENSE",
+          "README.md",
+          "SECURITY.md",
+          "Swabble",
+          "VISION.md",
+          "appcast.xml",
+          "apps",
+          "assets",
+          "changelog",
+          "docker-compose.yml",
+          "docker-setup.sh",
+          "docs.acp.md",
+          "docs",
+          "extensions",
+          "fly.private.toml",
+          "fly.toml",
+          "git-hooks",
+          "openclaw.mjs",
+          "openclaw.podman.env",
+          "package.json",
+          "packages",
+          "patches",
+          "pnpm-lock.yaml",
+          "pnpm-workspace.yaml",
+          "pyproject.toml",
+          "render.yaml",
+          "scripts",
+          "setup-podman.sh",
+          "skills",
+          "src",
+          "test",
+          "tsconfig.json",
+          "tsconfig.plugin-sdk.dts.json",
+          "tsdown.config.ts",
+          "ui",
+          "vendor",
+          "vitest.channels.config.ts",
+          "vitest.config.ts",
+          "vitest.e2e.config.ts",
+          "vitest.extensions.config.ts",
+          "vitest.gateway.config.ts",
+          "vitest.live.config.ts",
+          "vitest.scoped-config.ts",
+          "vitest.unit.config.ts",
+          "zizmor.yml"
+        ]
+      },
+      "best_practices": [
+        "模块化脚本组织",
+        "高星项目，值得学习"
+      ]
+    },
+    {
+      "repo_name": "openclaw/skills",
+      "stars": 2031,
+      "forks": 629,
+      "description": "All versions of all skills that are on clawhub.com archived",
+      "topics": [
+        "archive",
+        "backup",
+        "clawhub",
+        "openclaw",
+        "skill"
+      ],
+      "structure": {
+        "has_readme": true,
+        "has_workflow": false,
+        "has_scripts": false,
+        "has_config": false,
+        "file_count": 4,
+        "file_list": [
+          ".github",
+          "LICENSE",
+          "README.md",
+          "skills"
+        ]
+      },
+      "best_practices": [
+        "高星项目，值得学习"
+      ]
+    }
+  ],
+  "recommendations": []
+}

@@ -1,0 +1,98 @@
+{
+  "timestamp": "2026-03-06T03:22:43.403212",
+  "current_automation_score": 54.285714285714285,
+  "target_automation_score": 90,
+  "gap": 35.714285714285715,
+  "workflow_analysis": {
+    "workflows": [
+      {
+        "name": "auto-install",
+        "file": "auto-install.yml",
+        "schedule": true,
+        "manual_trigger": true
+      },
+      {
+        "name": "daily-analysis",
+        "file": "daily-analysis.yml",
+        "schedule": true,
+        "manual_trigger": true
+      },
+      {
+        "name": "github-learning",
+        "file": "github-learning.yml",
+        "schedule": true,
+        "manual_trigger": true
+      },
+      {
+        "name": "optimize-workflow",
+        "file": "optimize-workflow.yml",
+        "schedule": true,
+        "manual_trigger": true
+      },
+      {
+        "name": "setup-secrets",
+        "file": "setup-secrets.yml",
+        "schedule": false,
+        "manual_trigger": true
+      },
+      {
+        "name": "skill-recommendation",
+        "file": "skill-recommendation.yml",
+        "schedule": true,
+        "manual_trigger": true
+      },
+      {
+        "name": "test-system",
+        "file": "test-system.yml",
+        "schedule": true,
+        "manual_trigger": true
+      }
+    ],
+    "total_workflows": 7,
+    "scheduled_workflows": 6,
+    "manual_workflows": 7
+  },
+  "recommendations": [
+    {
+      "type": "performance_optimization",
+      "priority": "medium",
+      "description": "优化工作流执行时间",
+      "action": "使用缓存、并行执行等技术"
+    },
+    {
+      "type": "error_handling",
+      "priority": "medium",
+      "description": "增强错误处理",
+      "action": "添加重试机制和错误通知"
+    },
+    {
+      "type": "monitoring",
+      "priority": "low",
+      "description": "添加监控和日志",
+      "action": "记录工作流执行情况"
+    }
+  ],
+  "implementation_plan": [
+    {
+      "step": 1,
+      "type": "performance_optimization",
+      "priority": "medium",
+      "action": "使用缓存、并行执行等技术",
+      "estimated_time": "2-4 hours"
+    },
+    {
+      "step": 2,
+      "type": "error_handling",
+      "priority": "medium",
+      "action": "添加重试机制和错误通知",
+      "estimated_time": "2-4 hours"
+    },
+    {
+      "step": 3,
+      "type": "monitoring",
+      "priority": "low",
+      "action": "记录工作流执行情况",
+      "estimated_time": "2-4 hours"
+    }
+  ]
+}

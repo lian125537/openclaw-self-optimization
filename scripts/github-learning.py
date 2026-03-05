@@ -17,7 +17,7 @@ DOCS_DIR = PROJECT_ROOT / "docs"
 
 def search_github_repos(query, language=None, max_results=10):
     """搜索 GitHub 仓库"""
-    print(f"🔍 搜索 GitHub 仓库: {query}")
+    print(f"搜索 GitHub 仓库: {query}")
     
     cmd = f'"C:\\Program Files\\GitHub CLI\\gh.exe" search repos "{query}"'
     if language:
@@ -25,35 +25,35 @@ def search_github_repos(query, language=None, max_results=10):
     cmd += f' --limit {max_results}'
     
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
-        return result.stdout.strip()
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True, encoding='utf-8', errors='ignore')
+        return result.stdout.strip() if result.stdout else ""
     except subprocess.CalledProcessError as e:
-        print(f"搜索失败: {e}")
-        return None
+        print(f"搜索失败: {str(e)}")
+        return ""
 
 def get_repo_details(repo_name):
     """获取仓库详细信息"""
-    print(f"📊 获取仓库信息: {repo_name}")
+    print(f"获取仓库信息: {repo_name}")
     
     cmd = f'"C:\\Program Files\\GitHub CLI\\gh.exe" api repos/{repo_name} --jq .'
     
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True, encoding='utf-8', errors='ignore')
         return json.loads(result.stdout)
     except (subprocess.CalledProcessError, json.JSONDecodeError) as e:
-        print(f"获取仓库信息失败: {e}")
+        print(f"获取仓库信息失败: {str(e)}")
         return None
 
 def analyze_repo_structure(repo_name):
     """分析仓库结构"""
-    print(f"🔬 分析仓库结构: {repo_name}")
+    print(f"分析仓库结构: {repo_name}")
     
     # 获取仓库文件列表
     cmd = f'"C:\\Program Files\\GitHub CLI\\gh.exe" api repos/{repo_name}/contents --jq .[].name'
     
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
-        files = result.stdout.strip().split('\n')
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True, encoding='utf-8', errors='ignore')
+        files = result.stdout.strip().split('\n') if result.stdout else []
         
         structure = {
             "has_readme": "README.md" in files,
@@ -66,12 +66,12 @@ def analyze_repo_structure(repo_name):
         
         return structure
     except subprocess.CalledProcessError as e:
-        print(f"分析仓库结构失败: {e}")
+        print(f"分析仓库结构失败: {str(e)}")
         return None
 
 def extract_best_practices(repo_name):
     """提取最佳实践"""
-    print(f"💡 提取最佳实践: {repo_name}")
+    print(f"提取最佳实践: {repo_name}")
     
     details = get_repo_details(repo_name)
     if not details:
@@ -106,7 +106,7 @@ def extract_best_practices(repo_name):
 
 def search_clawhub_skills():
     """搜索 ClawHub 技能"""
-    print("🔍 搜索 ClawHub 技能...")
+    print("搜索 ClawHub 技能...")
     
     # 搜索 OpenClaw 相关项目
     queries = [
@@ -129,7 +129,7 @@ def search_clawhub_skills():
 
 def generate_learning_report():
     """生成学习报告"""
-    print("📊 生成学习报告...")
+    print("生成学习报告...")
     
     # 搜索相关项目
     clawhub_skills = search_clawhub_skills()
@@ -232,8 +232,8 @@ def generate_learning_report():
     with open(report_md_file, 'w', encoding='utf-8') as f:
         f.write(markdown_report)
     
-    print(f"✅ 学习报告已生成: {report_file}")
-    print(f"✅ Markdown 报告: {report_md_file}")
+    print(f"学习报告已生成: {report_file}")
+    print(f"Markdown 报告: {report_md_file}")
     
     return report
 
@@ -251,11 +251,11 @@ def main():
     print("=" * 60)
     
     # 输出关键信息
-    print(f"\n📊 搜索结果:")
+    print(f"\n搜索结果:")
     for skill_search in report['clawhub_skills']:
         print(f"  - {skill_search['query']}: {len(skill_search['repos'])} 个结果")
     
-    print(f"\n💡 最佳实践:")
+    print(f"\n最佳实践:")
     for practice in report['best_practices']:
         print(f"  - {practice['repo_name']}: {len(practice['best_practices'])} 个实践")
 

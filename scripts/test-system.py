@@ -17,42 +17,42 @@ DOCS_DIR = PROJECT_ROOT / "docs"
 
 def test_github_connection():
     """测试 GitHub 连接"""
-    print("🔧 测试 GitHub 连接...")
+    print("测试 GitHub 连接...")
     
     try:
         # 测试 GitHub CLI 认证
         result = subprocess.run(
             '"C:\\Program Files\\GitHub CLI\\gh.exe" auth status',
-            shell=True, capture_output=True, text=True, check=True
+            shell=True, capture_output=True, text=True, check=True, encoding='utf-8', errors='ignore'
         )
         
-        if "Logged in to" in result.stdout:
+        if result.stdout and "Logged in to" in result.stdout:
             return {"status": "success", "message": "GitHub 认证正常"}
         else:
             return {"status": "warning", "message": "GitHub 认证状态未知"}
     except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": f"GitHub 连接失败: {e.stderr}"}
+        return {"status": "error", "message": f"GitHub 连接失败: {str(e)}"}
 
 def test_openclaw_status():
     """测试 OpenClaw 状态"""
-    print("🔧 测试 OpenClaw 状态...")
+    print("测试 OpenClaw 状态...")
     
     try:
         result = subprocess.run(
             "openclaw status",
-            shell=True, capture_output=True, text=True, check=True
+            shell=True, capture_output=True, text=True, check=True, encoding='utf-8', errors='ignore'
         )
         
-        if "Gateway" in result.stdout and "local" in result.stdout:
+        if result.stdout and "Gateway" in result.stdout and "local" in result.stdout:
             return {"status": "success", "message": "OpenClaw 运行正常"}
         else:
             return {"status": "warning", "message": "OpenClaw 状态未知"}
     except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": f"OpenClaw 状态检查失败: {e.stderr}"}
+        return {"status": "error", "message": f"OpenClaw 状态检查失败: {str(e)}"}
 
 def test_workflow_files():
     """测试工作流文件"""
-    print("🔧 测试工作流文件...")
+    print("测试工作流文件...")
     
     workflows_dir = PROJECT_ROOT / ".github" / "workflows"
     if not workflows_dir.exists():
@@ -85,7 +85,7 @@ def test_workflow_files():
 
 def test_script_files():
     """测试脚本文件"""
-    print("🔧 测试脚本文件...")
+    print("测试脚本文件...")
     
     scripts_dir = PROJECT_ROOT / "scripts"
     if not scripts_dir.exists():
@@ -118,7 +118,7 @@ def test_script_files():
 
 def test_data_directory():
     """测试数据目录"""
-    print("🔧 测试数据目录...")
+    print("测试数据目录...")
     
     if not DATA_DIR.exists():
         return {"status": "warning", "message": "数据目录不存在，将自动创建"}
@@ -127,7 +127,7 @@ def test_data_directory():
 
 def generate_test_report():
     """生成测试报告"""
-    print("📊 生成测试报告...")
+    print("生成测试报告...")
     
     # 运行所有测试
     tests = {
@@ -235,8 +235,8 @@ def generate_test_report():
     with open(report_md_file, 'w', encoding='utf-8') as f:
         f.write(markdown_report)
     
-    print(f"✅ 测试报告已生成: {report_file}")
-    print(f"✅ Markdown 报告: {report_md_file}")
+    print(f"测试报告已生成: {report_file}")
+    print(f"Markdown 报告: {report_md_file}")
     
     return report
 
@@ -254,14 +254,14 @@ def main():
     print("=" * 60)
     
     # 输出关键信息
-    print(f"\n📊 测试结果:")
+    print(f"\n测试结果:")
     print(f"  - 总体状态: {report['overall_status'].upper()}")
     print(f"  - 成功: {report['status_summary']['success']}")
     print(f"  - 警告: {report['status_summary']['warning']}")
     print(f"  - 错误: {report['status_summary']['error']}")
     
     if report['recommendations']:
-        print(f"\n💡 推荐行动:")
+        print(f"\n推荐行动:")
         for rec in report['recommendations'][:3]:
             print(f"  - {rec['type']}: {rec['description']}")
 

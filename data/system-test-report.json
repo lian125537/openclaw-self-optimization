@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-03-06T03:21:50.618949",
+  "overall_status": "success",
+  "status_summary": {
+    "success": 5,
+    "warning": 0,
+    "error": 0
+  },
+  "tests": {
+    "github_connection": {
+      "status": "success",
+      "message": "GitHub 认证正常"
+    },
+    "openclaw_status": {
+      "status": "success",
+      "message": "OpenClaw 运行正常"
+    },
+    "workflow_files": {
+      "status": "success",
+      "message": "所有工作流文件都存在",
+      "found": [
+        "auto-install.yml",
+        "daily-analysis.yml",
+        "github-learning.yml",
+        "optimize-workflow.yml",
+        "setup-secrets.yml",
+        "skill-recommendation.yml",
+        "test-system.yml"
+      ]
+    },
+    "script_files": {
+      "status": "success",
+      "message": "所有脚本文件都存在",
+      "found": [
+        "analyze-capabilities.py",
+        "auto-install.py",
+        "github-learning.py",
+        "init-repo.py",
+        "optimize-workflow.py",
+        "recommend-skills.py",
+        "test-system.py"
+      ]
+    },
+    "data_directory": {
+      "status": "success",
+      "message": "数据目录存在"
+    }
+  },
+  "recommendations": []
+}
