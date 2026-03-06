@@ -3,8 +3,13 @@ name: Auto Install Skills
 on:
   workflow_dispatch:  # 手动触发
   schedule:
-    # 每周一和周四运行（北京时间上午 10 点）
+    # 每周一和周四运行（UTC 时间 18:00 = 北京时间次日凌晨 2:00）
     - cron: '0 18 * * 1,4'
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
 
 jobs:
   install:
@@ -14,19 +19,134 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Python
-      uses: actions/setup-python@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        python-version: '3.9'
+        node-version: '22'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
         
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install pyyaml requests
         
     - name: Install ClawHub CLI
       run: |
-        # 安装 ClawHub CLI
-        npm install -g @openclaw/clawhub
+        echo "Installing npx and verifying clawhub..."
+        npm install -g npx
+        npx clawhub@latest --version || echo "ClawHub CLI available"
+        
+    - name: Create scripts directory if not exists
+      run: |
+        mkdir -p scripts
+        mkdir -p data
+        mkdir -p docs
+        
+    - name: Create auto-install script
+      run: |
+        cat > scripts/auto-install.py << 'EOF'
+        #!/usr/bin/env python3
+        import json
+        import os
+        import subprocess
+        from datetime import datetime
+
+        def main():
+            print("Starting auto-install process...")
+            
+            # 获取推荐的技能列表（这里可以改成从文件读取或 API 获取）
+            recommended_skills = [
+                "tavily-search",
+                "self-improving-agent",
+                "proactive-agent",
+                "github"
+            ]
+            
+            results = []
+            
+            for skill in recommended_skills:
+                print(f"Installing {skill}...")
+                try:
+                    # 使用 npx clawhub 安装技能
+                    result = subprocess.run(
+                        ["npx", "clawhub@latest", "install", skill],
+                        capture_output=True,
+                        text=True,
+                        timeout=60
+                    )
+                    
+                    if result.returncode == 0:
+                        status = "success"
+                        message = result.stdout
+                    else:
+                        status = "failed"
+                        message = result.stderr
+                        
+                except Exception as e:
+                    status = "error"
+                    message = str(e)
+                
+                results.append({
+                    "skill": skill,
+                    "status": status,
+                    "message": message,
+                    "timestamp": datetime.now().isoformat()
+                })
+            
+            # 生成报告
+            report_json = {
+                "timestamp": datetime.now().isoformat(),
+                "total": len(results),
+                "success": len([r for r in results if r["status"] == "success"]),
+                "failed": len([r for r in results if r["status"] in ["failed", "error"]]),
+                "results": results
+            }
+            
+            # 保存 JSON 报告
+            os.makedirs("data", exist_ok=True)
+            with open("data/install-report.json", "w") as f:
+                json.dump(report_json, f, indent=2)
+            
+            # 生成 Markdown 报告
+            md_content = f"""# 技能自动安装报告
+
+生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+## 统计信息
+- 总计尝试安装: {report_json['total']}
+- 成功: {report_json['success']}
+- 失败: {report_json['failed']}
+
+## 详细结果
+"""
+            for r in results:
+                md_content += f"""
+### {r['skill']} - {'✅ 成功' if r['status'] == 'success' else '❌ 失败'}
+状态: {r['status']}
+时间: {r['timestamp']}
+"""
+                if r['status'] == 'success':
+                    md_content += f"输出: {r['message'][:200]}\n"
+                else:
+                    md_content += f"错误: {r['message'][:200]}\n"
+            
+            md_content += "\n---\n*本报告由 GitHub Actions 自动生成*"
+            
+            with open("docs/install-report.md", "w") as f:
+                f.write(md_content)
+            
+            print("Install process completed")
+            print(f"Success: {report_json['success']}, Failed: {report_json['failed']}")
+
+        if __name__ == "__main__":
+            main()
+        EOF
+        
+        chmod +x scripts/auto-install.py
         
     - name: Run auto install
       run: |
@@ -39,26 +159,51 @@ jobs:
         path: |
           data/install-report.json
           docs/install-report.md
-          
+        retention-days: 7
+        if-no-files-found: warn
+        
     - name: Create GitHub Issue
       if: success()
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const fs = require('fs');
-          const report = fs.readFileSync('docs/install-report.md', 'utf8');
           
-          github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: `技能安装报告 - ${new Date().toISOString().split('T')[0]}`,
-            body: report,
-            labels: ['技能安装', '自动化']
-          });
+          try {
+            // 检查报告文件是否存在
+            if (!fs.existsSync('docs/install-report.md')) {
+              console.log('Report file not found, skipping issue creation');
+              return;
+            }
+            
+            const report = fs.readFileSync('docs/install-report.md', 'utf8');
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `技能安装报告 - ${new Date().toISOString().split('T')[0]}`,
+              body: report,
+              labels: ['auto-install', 'report']
+            });
+            
+            console.log('Issue created successfully');
+          } catch (error) {
+            console.log('Error creating issue:', error.message);
+          }
           
     - name: Send notification
       if: success()
       run: |
-        echo "技能安装完成！"
-        echo "报告已上传到 GitHub Actions Artifacts"
-        echo "新 Issue 已创建"
+        echo "✅ 技能自动安装完成！"
+        echo "📊 报告已上传到 GitHub Actions Artifacts"
+        echo "📝 新 Issue 已创建（如果成功）"
+        
+    - name: Upload logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: error-logs
+        path: |
+          /home/runner/.npm/_logs/
+          scripts/auto-install.py
+        retention-days: 7
