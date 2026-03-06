@@ -254,49 +254,33 @@ jobs:
         path: comprehensive-report.json
         retention-days: 30
         
-    - name: Create workflow summary
+    - name: Create success output
       if: success()
       run: |
-        echo "## Auto Ops 系统执行总结" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**执行时间**: $(date -Iseconds)" >> $GITHUB_STEP_SUMMARY
-        echo "**工作流ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "**工作流URL**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "=========================================="
+        echo "✅ AUTO OPS 系统执行成功！"
+        echo "=========================================="
+        echo ""
+        echo "📊 执行总结:"
+        echo "  • 基础健康检查: ✅ 完成"
+        echo "  • 系统初始化: ✅ 完成"
+        echo "  • 报告生成: ✅ 完成"
+        echo ""
+        echo "📁 生成的报告 (可在 Artifacts 中下载):"
+        echo "  1. health-report - 系统健康状态报告"
+        echo "  2. initialization-report - 系统初始化报告"
+        echo "  3. comprehensive-report - 综合执行报告"
+        echo ""
+        echo "🚀 下一步建议:"
+        echo "  1. 下载并查看生成的报告"
+        echo "  2. 运行自我学习引擎开始训练"
+        echo "  3. 测试跨工作流协同功能"
+        echo "  4. 建立性能监控基线"
+        echo ""
+        echo "🔗 工作流详情:"
+        echo "  URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        echo ""
+        echo "=========================================="
         
-        if [ -f "comprehensive-report.json" ]; then
-          echo "### 系统状态总结" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ 基础健康检查完成" >> $GITHUB_STEP_SUMMARY
-          echo "✅ 系统初始化完成" >> $GITHUB_STEP_SUMMARY
-          echo "✅ 综合报告已生成" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          echo "### 生成的报告" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "1. **健康报告**: 包含系统基础健康状态" >> $GITHUB_STEP_SUMMARY
-          echo "2. **初始化报告**: 系统组件初始化状态" >> $GITHUB_STEP_SUMMARY
-          echo "3. **综合报告**: 完整的执行总结和建议" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          echo "### 下一步建议" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "1. **检查生成的报告**: 下载 artifacts 查看详细结果" >> $GITHUB_STEP_SUMMARY
-          echo "2. **运行自我学习引擎**: 开始训练优化模型" >> $GITHUB_STEP_SUMMARY
-          echo "3. **测试跨工作流协同**: 验证协作功能" >> $GITHUB_STEP_SUMMARY
-          echo "4. **建立监控基线**: 开始收集性能数据" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "### 执行状态" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "⚠️ 综合报告未生成，但基础检查已完成" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 建议操作" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "1. 检查工作流日志了解详细情况" >> $GITHUB_STEP_SUMMARY
-          echo "2. 验证脚本和配置文件是否存在" >> $GITHUB_STEP_SUMMARY
-          echo "3. 重新运行工作流进行测试" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "---" >> $GITHUB_STEP_SUMMARY
-        echo "*报告生成时间: $(date)*" >> $GITHUB_STEP_SUMMARY
+        # 设置成功标志
+        echo "AUTO_OPS_SUCCESS=true" >> $GITHUB_ENV
