@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-03-07T01:53:59.796269",
+  "environment": {
+    "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "current_dir": "C:\\Users\\yodat\\.openclaw\\workspace\\openclaw-self-optimization",
+    "git_available": true,
+    "python_available": true,
+    "openclaw_available": true,
+    "dir_.github/workflows": true,
+    "dir_scripts": true,
+    "dir_config": true,
+    "dir_data": true
+  },
+  "configs": [
+    "auto-ops-config.yaml",
+    "business-metrics-mapping.yaml"
+  ],
+  "database": {
+    "exists": true,
+    "tables": [
+      "workflow_runs",
+      "learnings",
+      "metrics"
+    ],
+    "table_count": 3,
+    "path": "C:\\Users\\yodat\\.openclaw\\workspace\\openclaw-self-optimization\\data\\auto-ops.db"
+  },
+  "validations": {
+    "has_workflows": 13,
+    "has_scripts": 26,
+    "git_clean": false
+  },
+  "summary": {
+    "success": false,
+    "steps_completed": 5
+  }
+}
