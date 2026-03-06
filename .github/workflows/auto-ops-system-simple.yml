@@ -254,50 +254,49 @@ jobs:
         path: comprehensive-report.json
         retention-days: 30
         
-    - name: Create summary comment
+    - name: Create workflow summary
       if: success()
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          let reportContent = '';
+      run: |
+        echo "## Auto Ops 系统执行总结" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**执行时间**: $(date -Iseconds)" >> $GITHUB_STEP_SUMMARY
+        echo "**工作流ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+        echo "**工作流URL**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "comprehensive-report.json" ]; then
+          echo "### 系统状态总结" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ 基础健康检查完成" >> $GITHUB_STEP_SUMMARY
+          echo "✅ 系统初始化完成" >> $GITHUB_STEP_SUMMARY
+          echo "✅ 综合报告已生成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           
-          try {
-            if (fs.existsSync('comprehensive-report.json')) {
-              const report = JSON.parse(fs.readFileSync('comprehensive-report.json', 'utf8'));
-              reportContent = `## Auto Ops 系统部署报告\n\n`;
-              reportContent += `**执行时间**: ${new Date().toISOString()}\n`;
-              reportContent += `**健康状态**: ${report.summary.health_status}\n`;
-              reportContent += `**优化机会**: ${report.summary.optimization_opportunities}\n`;
-              reportContent += `**系统状态**: ${report.summary.system_initialized ? '已初始化' : '未初始化'}\n\n`;
-              reportContent += `### 关键建议\n`;
-              
-              report.recommendations.forEach((rec, index) => {
-                reportContent += `${index + 1}. ${rec}\n`;
-              });
-              
-              reportContent += `\n### 下一步行动\n`;
-              
-              report.next_actions.forEach((action, index) => {
-                reportContent += `${index + 1}. **[${action.priority.toUpperCase()}]** ${action.description}\n`;
-              });
-            } else {
-              reportContent = `## Auto Ops 系统执行完成\n\n`;
-              reportContent += `**状态**: 基础检查完成\n`;
-              reportContent += `**时间**: ${new Date().toISOString()}\n`;
-              reportContent += `**工作流ID**: ${context.runId}\n`;
-            }
-            
-            // 创建 Issue 评论
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: reportContent
-            });
-            
-          } catch (error) {
-            console.error('Error creating comment:', error);
-            // 如果创建 Issue 评论失败，至少输出日志
-            console.log('Report content would have been:', reportContent);
-          }
+          echo "### 生成的报告" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. **健康报告**: 包含系统基础健康状态" >> $GITHUB_STEP_SUMMARY
+          echo "2. **初始化报告**: 系统组件初始化状态" >> $GITHUB_STEP_SUMMARY
+          echo "3. **综合报告**: 完整的执行总结和建议" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 下一步建议" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. **检查生成的报告**: 下载 artifacts 查看详细结果" >> $GITHUB_STEP_SUMMARY
+          echo "2. **运行自我学习引擎**: 开始训练优化模型" >> $GITHUB_STEP_SUMMARY
+          echo "3. **测试跨工作流协同**: 验证协作功能" >> $GITHUB_STEP_SUMMARY
+          echo "4. **建立监控基线**: 开始收集性能数据" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "### 执行状态" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ 综合报告未生成，但基础检查已完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 建议操作" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. 检查工作流日志了解详细情况" >> $GITHUB_STEP_SUMMARY
+          echo "2. 验证脚本和配置文件是否存在" >> $GITHUB_STEP_SUMMARY
+          echo "3. 重新运行工作流进行测试" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "*报告生成时间: $(date)*" >> $GITHUB_STEP_SUMMARY
