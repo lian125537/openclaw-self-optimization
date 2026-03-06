@@ -33,7 +33,7 @@ jobs:
         python scripts/auto-install.py
         
     - name: Upload install report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: install-report
         path: |
