@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-03-06T23:16:25.662778",
+  "openclaw_status": {
+    "gateway": "running",
+    "sessions": "1 active",
+    "model": "unknown"
+  },
+  "capability_analysis": {
+    "installed_skills": [
+      "clawhub",
+      "github",
+      "github-cli",
+      "healthcheck",
+      "weather",
+      "tts",
+      "proactive-agent",
+      "self-improvement",
+      "tavily",
+      "video-frames",
+      "skill-creator",
+      "gh-issues",
+      "clawhub",
+      "github",
+      "github-cli",
+      "healthcheck",
+      "weather",
+      "openai-image-gen",
+      "openai-whisper",
+      "openai-whisper-api",
+      "openhue",
+      "sonoscli",
+      "spotify-player"
+    ],
+    "skill_gaps": [
+      "file-manager",
+      "calendar",
+      "email-client",
+      "task-manager",
+      "note-taking",
+      "code-editor",
+      "database-client",
+      "api-client",
+      "monitoring",
+      "logging",
+      "backup",
+      "security"
+    ],
+    "gap_count": 12,
+    "completion_rate": 65.71428571428571
+  },
+  "recommendations": [
+    {
+      "type": "skill_install",
+      "priority": "high",
+      "skills": [
+        "file-manager",
+        "calendar",
+        "email-client"
+      ],
+      "reason": "基于常用任务模式识别的能力缺口"
+    }
+  ]
+}

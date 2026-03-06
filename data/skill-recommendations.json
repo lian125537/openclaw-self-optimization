@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-03-06T23:28:16.077537",
+  "recommendations": [
+    {
+      "skill": "file-manager",
+      "priority": "high",
+      "reason": "文件管理基础技能"
+    },
+    {
+      "skill": "calendar",
+      "priority": "medium",
+      "reason": "日程管理"
+    },
+    {
+      "skill": "email-client",
+      "priority": "low",
+      "reason": "邮件客户端"
+    }
+  ]
+}

@@ -6,18 +6,21 @@ on:
     - cron: '0 20 * * *'
   workflow_dispatch:  # 手动触发
 
+permissions:
+  contents: write
+  issues: write
 jobs:
   shorten:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.11'
         
     - name: Install dependencies
       run: |
@@ -28,7 +31,7 @@ jobs:
         python scripts/learning-cycle-shortener.py
         
     - name: Upload cycle results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: learning-cycle-results
         path: |
@@ -36,7 +39,7 @@ jobs:
           
     - name: Create GitHub Issue
       if: success()
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const fs = require('fs');
@@ -75,4 +78,5 @@ jobs:
       run: |
         echo "学习周期缩短完成！"
         echo "报告已上传到 GitHub Actions Artifacts"
+        if-no-files-found: warn
         echo "新 Issue 已创建"

@@ -9,15 +9,18 @@ on:
 jobs:
   recommend:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.11'
         
     - name: Install dependencies
       run: |
@@ -34,10 +37,12 @@ jobs:
         path: |
           data/skill-recommendations.json
           docs/skill-recommendations.md
+        retention-days: 7
+        if-no-files-found: warn
           
     - name: Create GitHub Issue
       if: success()
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const fs = require('fs');
