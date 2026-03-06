@@ -2,8 +2,8 @@
 
 # GitHub 配置
 github:
-  username: ""  # 你的 GitHub 用户名
-  token: ""     # GitHub Personal Access Token (repo, workflow 权限)
+  username: "yodat"  # 你的 GitHub 用户名
+  token: "your_github_token"     # GitHub Personal Access Token (repo, workflow 权限)
   repository: "openclaw-self-optimization"  # 仓库名称
 
 # 自动化配置
@@ -26,8 +26,8 @@ automation:
 # 通知配置
 notifications:
   telegram:
-    bot_token: ""  # Telegram Bot Token
-    chat_id: ""    # Telegram Chat ID
+    bot_token: "your_telegram_bot_token"  # Telegram Bot Token
+    chat_id: "your_chat_id"    # Telegram Chat ID
     
   email:
     enabled: false
