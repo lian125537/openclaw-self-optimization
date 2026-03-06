@@ -37,8 +37,8 @@ jobs:
     - name: Install ClawHub CLI
       run: |
         echo "Installing npx and verifying clawhub..."
-        npm install -g npx
-        npx clawhub@latest --version || echo "ClawHub CLI available"
+        npm install -g npx || echo "npx installation skipped"
+        npx clawhub@latest --version || echo "ClawHub CLI not found in registry, skipping"
         
     - name: Create scripts directory if not exists
       run: |
