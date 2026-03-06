@@ -1,0 +1,161 @@
+# 技能安装配置
+skills:
+  - tavily-search
+  - self-improving-agent
+  - proactive-agent
+  - github
+  - skill-creator
+  - video-frames
+  - weather
+
+# 安装设置
+max_retries: 3
+timeout: 60  # 每个技能的超时时间（秒）
+parallel_install: false  # 是否并行安装（实验性）
+skip_failed: false  # 遇到失败是否跳过后续技能
+notify_on_failure: true
+
+# 缓存设置
+cache_enabled: true
+cache_ttl: 86400  # 缓存有效期（秒，24小时）
+
+# 日志设置
+log_level: INFO
+log_retention: 7  # 日志保留天数
+
+# 报告设置
+generate_json_report: true
+generate_markdown_report: true
+generate_html_report: false
+report_retention_days: 30
+
+# 通知设置
+create_github_issue: true
+issue_labels:
+  - auto-install
+  - report
+  - automation
+
+send_notification: true
+notification_channels:
+  - github_actions
+  # - slack  # 未来支持
+  # - telegram  # 未来支持
+
+# 性能优化
+enable_caching: true
+enable_compression: true
+enable_validation: true
+
+# 高级设置
+validate_skills: true  # 安装前验证技能是否存在
+check_dependencies: true  # 检查依赖关系
+auto_update: false  # 自动更新已安装的技能
+cleanup_old_versions: true  # 清理旧版本
+
+# 监控设置
+enable_monitoring: true
+metrics_collection: true
+performance_tracking: true
+
+# 故障恢复
+auto_recovery: true
+backup_before_install: false
+rollback_on_failure: false
+
+# 调度优化（覆盖工作流的 schedule）
+schedules:
+  primary:
+    cron: "0 18 * * 1,4"  # 每周一、四 UTC 18:00
+    timezone: "UTC"
+  
+  fallback:
+    cron: "0 12 * * *"  # 每天 UTC 12:00 作为备用
+    enabled: false
+  
+  quick_test:
+    cron: "*/30 * * * *"  # 每30分钟（测试用）
+    enabled: false
+
+# 技能特定配置
+skill_configs:
+  tavily-search:
+    version: "latest"
+    force_update: false
+    additional_deps: []
+    
+  self-improving-agent:
+    version: ">=1.0.0"
+    force_update: true
+    additional_deps:
+      - "learning-utils"
+    
+  proactive-agent:
+    version: "latest"
+    force_update: false
+    additional_deps: []
+    
+  github:
+    version: ">=2.0.0"
+    force_update: false
+    additional_deps:
+      - "git-tools"
+
+# 环境配置
+environment:
+  node_version: "22"
+  python_version: "3.11"
+  os: "ubuntu-latest"
+  
+  # 环境变量
+  env_vars:
+    NODE_ENV: "production"
+    PYTHONUNBUFFERED: "1"
+    LOG_LEVEL: "INFO"
+    
+  # 资源限制
+  resources:
+    memory: "4GB"
+    cpu: "2"
+    timeout: "30m"
+
+# 验证规则
+validation_rules:
+  min_success_rate: 0.8  # 最低成功率
+  max_duration: 600  # 最大执行时间（秒）
+  required_skills:  # 必须成功的技能
+    - "self-improving-agent"
+    - "proactive-agent"
+  
+  # 质量门禁
+  quality_gates:
+    - name: "installation_speed"
+      threshold: 300  # 秒
+      action: "warn"
+    
+    - name: "success_rate"
+      threshold: 0.9  # 90%
+      action: "fail"
+
+# 集成设置
+integrations:
+  github_actions:
+    upload_artifacts: true
+    artifact_retention: 14
+    
+  monitoring:
+    datadog: false
+    prometheus: false
+    grafana: false
+    
+  notification:
+    slack_webhook: ""
+    telegram_bot_token: ""
+    discord_webhook: ""
+
+# 调试设置
+debug:
+  enabled: false
+  verbose_logging: false
+  save_intermediate_files: false
+  profile_performance: false
