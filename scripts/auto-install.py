@@ -152,6 +152,11 @@ def generate_install_report(installed, failed):
 
 def main():
     """主函数"""
+    # 设置标准输出编码
+    import sys
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='ignore')
+    
     print("=" * 60)
     print("OpenClaw 自动安装系统")
     print("=" * 60)
