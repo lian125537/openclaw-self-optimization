@@ -1,0 +1,383 @@
+# Business Metrics Mapping Configuration
+# 技术指标到业务指标的映射配置
+
+# 技术指标定义
+technical_metrics:
+  # 执行性能指标
+  execution_performance:
+    execution_time:
+      description: "工作流执行时间"
+      unit: "seconds"
+      optimization_direction: "minimize"
+      
+    success_rate:
+      description: "工作流执行成功率"
+      unit: "percentage"
+      optimization_direction: "maximize"
+      
+    failure_rate:
+      description: "工作流执行失败率"
+      unit: "percentage"
+      optimization_direction: "minimize"
+      
+  # 资源使用指标
+  resource_utilization:
+    cpu_usage:
+      description: "CPU使用率"
+      unit: "percentage"
+      optimization_direction: "optimize"  # 保持在合理范围
+      
+    memory_usage:
+      description: "内存使用率"
+      unit: "percentage"
+      optimization_direction: "optimize"
+      
+    disk_usage:
+      description: "磁盘使用率"
+      unit: "percentage"
+      optimization_direction: "optimize"
+      
+    network_bandwidth:
+      description: "网络带宽使用"
+      unit: "Mbps"
+      optimization_direction: "optimize"
+      
+  # 效率指标
+  efficiency_metrics:
+    parallel_efficiency:
+      description: "并行执行效率"
+      unit: "percentage"
+      optimization_direction: "maximize"
+      
+    resource_efficiency:
+      description: "资源使用效率"
+      unit: "score"  # 0-100分
+      optimization_direction: "maximize"
+      
+    cost_efficiency:
+      description: "成本效率"
+      unit: "score"
+      optimization_direction: "maximize"
+      
+  # 可靠性指标
+  reliability_metrics:
+    mean_time_between_failures:
+      description: "平均故障间隔时间"
+      unit: "hours"
+      optimization_direction: "maximize"
+      
+    mean_time_to_recovery:
+      description: "平均恢复时间"
+      unit: "minutes"
+      optimization_direction: "minimize"
+      
+    availability:
+      description: "系统可用性"
+      unit: "percentage"
+      optimization_direction: "maximize"
+
+# 业务指标定义
+business_metrics:
+  # 财务指标
+  financial_metrics:
+    operational_cost:
+      description: "运维成本"
+      unit: "currency"
+      optimization_direction: "minimize"
+      calculation_formula: "sum(resource_cost) + sum(labor_cost)"
+      
+    development_cost:
+      description: "开发成本"
+      unit: "currency"
+      optimization_direction: "minimize"
+      calculation_formula: "developer_hours * hourly_rate"
+      
+    total_cost_of_ownership:
+      description: "总拥有成本"
+      unit: "currency"
+      optimization_direction: "minimize"
+      calculation_formula: "operational_cost + development_cost + maintenance_cost"
+      
+    return_on_investment:
+      description: "投资回报率"
+      unit: "percentage"
+      optimization_direction: "maximize"
+      calculation_formula: "(benefits - costs) / costs * 100"
+      
+  # 运营指标
+  operational_metrics:
+    team_productivity:
+      description: "团队生产力"
+      unit: "score"
+      optimization_direction: "maximize"
+      calculation_formula: "tasks_completed / time_spent"
+      
+    innovation_speed:
+      description: "创新速度"
+      unit: "features_per_month"
+      optimization_direction: "maximize"
+      calculation_formula: "new_features / time_period"
+      
+    time_to_market:
+      description: "产品上市时间"
+      unit: "days"
+      optimization_direction: "minimize"
+      calculation_formula: "concept_to_release_duration"
+      
+  # 客户指标
+  customer_metrics:
+    customer_satisfaction:
+      description: "客户满意度"
+      unit: "score"  # 1-5分
+      optimization_direction: "maximize"
+      calculation_formula: "average(customer_ratings)"
+      
+    service_quality:
+      description: "服务质量"
+      unit: "score"
+      optimization_direction: "maximize"
+      calculation_formula: "weighted_average(reliability, performance, availability)"
+      
+    customer_retention:
+      description: "客户留存率"
+      unit: "percentage"
+      optimization_direction: "maximize"
+      calculation_formula: "retained_customers / total_customers * 100"
+      
+  # 竞争指标
+  competitive_metrics:
+    market_share:
+      description: "市场份额"
+      unit: "percentage"
+      optimization_direction: "maximize"
+      calculation_formula: "our_revenue / total_market_revenue * 100"
+      
+    competitive_advantage:
+      description: "竞争优势"
+      unit: "score"
+      optimization_direction: "maximize"
+      calculation_formula: "weighted_sum(features, performance, cost)"
+      
+    brand_reputation:
+      description: "品牌声誉"
+      unit: "score"
+      optimization_direction: "maximize"
+      calculation_formula: "average(sentiment_scores)"
+
+# 技术到业务的映射关系
+mapping_rules:
+  # 执行时间映射
+  - technical_metric: "execution_time"
+    business_metrics:
+      - metric: "operational_cost"
+        impact_factor: 0.3
+        calculation: "execution_time * resource_cost_per_minute"
+        
+      - metric: "team_productivity"
+        impact_factor: 0.4
+        calculation: "inverse(execution_time) * productivity_factor"
+        
+      - metric: "time_to_market"
+        impact_factor: 0.3
+        calculation: "execution_time * pipeline_frequency"
+        
+  # 成功率映射
+  - technical_metric: "success_rate"
+    business_metrics:
+      - metric: "customer_satisfaction"
+        impact_factor: 0.5
+        calculation: "success_rate * satisfaction_weight"
+        
+      - metric: "service_quality"
+        impact_factor: 0.3
+        calculation: "success_rate * quality_weight"
+        
+      - metric: "operational_cost"
+        impact_factor: 0.2
+        calculation: "(100 - success_rate) * failure_cost"
+        
+  # 资源使用映射
+  - technical_metric: "resource_utilization"
+    business_metrics:
+      - metric: "operational_cost"
+        impact_factor: 0.6
+        calculation: "sum(resource_usage * resource_cost)"
+        
+      - metric: "total_cost_of_ownership"
+        impact_factor: 0.4
+        calculation: "resource_utilization * ownership_cost_factor"
+        
+  # 并行效率映射
+  - technical_metric: "parallel_efficiency"
+    business_metrics:
+      - metric: "innovation_speed"
+        impact_factor: 0.5
+        calculation: "parallel_efficiency * speed_multiplier"
+        
+      - metric: "team_productivity"
+        impact_factor: 0.3
+        calculation: "parallel_efficiency * productivity_multiplier"
+        
+      - metric: "time_to_market"
+        impact_factor: 0.2
+        calculation: "inverse(parallel_efficiency) * time_penalty"
+        
+  # 可用性映射
+  - technical_metric: "availability"
+    business_metrics:
+      - metric: "customer_satisfaction"
+        impact_factor: 0.4
+        calculation: "availability * satisfaction_weight"
+        
+      - metric: "service_quality"
+        impact_factor: 0.3
+        calculation: "availability * quality_weight"
+        
+      - metric: "brand_reputation"
+        impact_factor: 0.3
+        calculation: "availability * reputation_weight"
+
+# 价值计算权重
+value_calculation_weights:
+  # 财务权重
+  financial_weight: 0.4
+  # 运营权重
+  operational_weight: 0.3
+  # 客户权重
+  customer_weight: 0.2
+  # 竞争权重
+  competitive_weight: 0.1
+  
+  # 子权重
+  sub_weights:
+    operational_cost: 0.4
+    development_cost: 0.3
+    maintenance_cost: 0.3
+    
+    team_productivity: 0.4
+    innovation_speed: 0.3
+    time_to_market: 0.3
+    
+    customer_satisfaction: 0.5
+    service_quality: 0.3
+    customer_retention: 0.2
+    
+    market_share: 0.4
+    competitive_advantage: 0.4
+    brand_reputation: 0.2
+
+# 优化优先级矩阵
+optimization_priority_matrix:
+  # 基于业务影响的优先级
+  business_impact_priority:
+    high_impact:
+      criteria: "roi_increase > 20% OR cost_reduction > 30%"
+      priority_score: 1.0
+      
+    medium_impact:
+      criteria: "roi_increase 10-20% OR cost_reduction 15-30%"
+      priority_score: 0.7
+      
+    low_impact:
+      criteria: "roi_increase < 10% OR cost_reduction < 15%"
+      priority_score: 0.4
+      
+  # 基于实施复杂度的优先级
+  implementation_complexity_priority:
+    low_complexity:
+      criteria: "implementation_time < 1 day"
+      priority_score: 1.0
+      
+    medium_complexity:
+      criteria: "implementation_time 1-7 days"
+      priority_score: 0.6
+      
+    high_complexity:
+      criteria: "implementation_time > 7 days"
+      priority_score: 0.3
+      
+  # 基于风险的优先级
+  risk_priority:
+    low_risk:
+      criteria: "success_rate > 90% AND rollback_possible"
+      priority_score: 1.0
+      
+    medium_risk:
+      criteria: "success_rate 70-90% OR partial_rollback"
+      priority_score: 0.5
+      
+    high_risk:
+      criteria: "success_rate < 70% OR no_rollback"
+      priority_score: 0.2
+
+# 报告和可视化配置
+reporting:
+  # 报告频率
+  report_frequency:
+    realtime: true
+    hourly: true
+    daily: true
+    weekly: true
+    monthly: true
+    
+  # 报告内容
+  report_content:
+    executive_summary: true
+    technical_details: true
+    financial_analysis: true
+    recommendations: true
+    action_items: true
+    
+  # 可视化格式
+  visualization_formats:
+    dashboard: true
+    charts: true
+    tables: true
+    alerts: true
+    notifications: true
+    
+  # 目标受众
+  target_audiences:
+    executives:
+      content: "executive_summary, financial_analysis, recommendations"
+      format: "dashboard, charts"
+      frequency: "weekly"
+      
+    technical_managers:
+      content: "technical_details, recommendations, action_items"
+      format: "tables, charts"
+      frequency: "daily"
+      
+    developers:
+      content: "technical_details, action_items"
+      format: "tables, alerts"
+      frequency: "realtime"
+
+# 持续改进配置
+continuous_improvement:
+  # 反馈循环
+  feedback_loops:
+    user_feedback: true
+    system_feedback: true
+    performance_feedback: true
+    business_feedback: true
+    
+  # 学习机制
+  learning_mechanisms:
+    reinforcement_learning: true
+    supervised_learning: true
+    unsupervised_learning: true
+    transfer_learning: true
+    
+  # 优化周期
+  optimization_cycles:
+    short_term: "daily"  # 日常优化
+    medium_term: "weekly"  # 周度优化
+    long_term: "monthly"  # 月度优化
+    
+  # 评估标准
+  evaluation_criteria:
+    technical_performance: true
+    business_value: true
+    user_satisfaction: true
+    cost_effectiveness: true

@@ -1,0 +1,628 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Auto Ops System Initialization Script
+完全自动化运维系统初始化脚本
+"""
+
+import os
+import sys
+import json
+import yaml
+import sqlite3
+from pathlib import Path
+from datetime import datetime
+import logging
+
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+class AutoOpsInitializer:
+    """Auto Ops 系统初始化器"""
+    
+    def __init__(self, base_dir: str = "."):
+        self.base_dir = Path(base_dir)
+        self.config = {}
+        self.setup_directories()
+        
+    def setup_directories(self):
+        """设置必要的目录结构"""
+        directories = [
+            "data",
+            "config",
+            "scripts",
+            "insights",
+            "predictions",
+            "schedule",
+            "recommendations",
+            "logs",
+            "models",
+            "training_data",
+            "validation_data",
+            "reports",
+            "dashboard",
+            "backup"
+        ]
+        
+        logger.info("Setting up directory structure...")
+        for directory in directories:
+            dir_path = self.base_dir / directory
+            dir_path.mkdir(parents=True, exist_ok=True)
+            logger.debug(f"Created directory: {dir_path}")
+            
+        logger.info(f"Created {len(directories)} directories")
+    
+    def load_configuration(self):
+        """加载配置文件"""
+        config_files = {
+            "system": "config/auto-ops-config.yaml",
+            "business_mapping": "config/business-metrics-mapping.yaml",
+            "workflows": ".github/workflows/auto-ops-system.yml"
+        }
+        
+        logger.info("Loading configuration files...")
+        for config_name, config_path in config_files.items():
+            file_path = self.base_dir / config_path
+            if file_path.exists():
+                try:
+                    if config_path.endswith('.yaml') or config_path.endswith('.yml'):
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            self.config[config_name] = yaml.safe_load(f)
+                    elif config_path.endswith('.json'):
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            self.config[config_name] = json.load(f)
+                    logger.info(f"Loaded {config_name} configuration")
+                except Exception as e:
+                    logger.error(f"Error loading {config_name}: {e}")
+            else:
+                logger.warning(f"Configuration file not found: {config_path}")
+    
+    def setup_database(self):
+        """设置数据库"""
+        db_path = self.base_dir / "data" / "performance-metrics.db"
+        
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            
+            # 创建性能指标表
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS performance_metrics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                metric_name TEXT NOT NULL,
+                metric_value REAL NOT NULL,
+                metric_unit TEXT,
+                workflow_id TEXT,
+                execution_id TEXT,
+                timestamp TIMESTAMP NOT NULL,
+                context_json TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # 创建工作流执行表
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS workflow_executions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                workflow_id TEXT NOT NULL,
+                workflow_name TEXT NOT NULL,
+                execution_id TEXT UNIQUE NOT NULL,
+                status TEXT NOT NULL,
+                start_time TIMESTAMP NOT NULL,
+                end_time TIMESTAMP,
+                duration REAL,
+                success_rate REAL,
+                resource_usage_json TEXT,
+                error_log TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # 创建学习经验表
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS learning_experiences (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                domain TEXT NOT NULL,
+                state_json TEXT NOT NULL,
+                action_json TEXT NOT NULL,
+                reward REAL NOT NULL,
+                next_state_json TEXT NOT NULL,
+                timestamp TIMESTAMP NOT NULL,
+                metadata_json TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # 创建优化策略表
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS optimization_policies (
+                policy_id TEXT PRIMARY KEY,
+                domain TEXT NOT NULL,
+                conditions_json TEXT NOT NULL,
+                actions_json TEXT NOT NULL,
+                confidence REAL NOT NULL,
+                success_rate REAL NOT NULL,
+                last_updated TIMESTAMP NOT NULL,
+                usage_count INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # 创建业务指标表
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS business_metrics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                metric_name TEXT NOT NULL,
+                metric_value REAL NOT NULL,
+                metric_unit TEXT,
+                period TEXT NOT NULL,  # daily, weekly, monthly
+                period_start TIMESTAMP NOT NULL,
+                period_end TIMESTAMP NOT NULL,
+                context_json TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # 创建协作机会表
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS collaboration_opportunities (
+                opportunity_id TEXT PRIMARY KEY,
+                workflow_ids_json TEXT NOT NULL,
+                collaboration_type TEXT NOT NULL,
+                expected_benefit REAL NOT NULL,
+                implementation_complexity REAL NOT NULL,
+                priority REAL NOT NULL,
+                description TEXT,
+                implementation_plan_json TEXT,
+                status TEXT DEFAULT 'identified',  # identified, planned, implemented, evaluated
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # 创建索引
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_metrics_timestamp ON performance_metrics(timestamp)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_executions_workflow ON workflow_executions(workflow_id)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_domain ON learning_experiences(domain)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_business_metrics_period ON business_metrics(period_start)")
+            
+            conn.commit()
+            conn.close()
+            
+            logger.info(f"Database setup completed: {db_path}")
+            
+        except Exception as e:
+            logger.error(f"Error setting up database: {e}")
+            raise
+    
+    def setup_initial_data(self):
+        """设置初始数据"""
+        try:
+            # 创建初始配置示例
+            initial_config = {
+                "system": {
+                    "initialized_at": datetime.now().isoformat(),
+                    "version": "1.0.0",
+                    "status": "active"
+                },
+                "learning": {
+                    "initial_policies": [
+                        {
+                            "policy_id": "default_execution_optimization",
+                            "domain": "execution",
+                            "conditions": {"success_rate": {"min": 0.8}},
+                            "actions": [{"type": "cache_optimization", "params": {"level": "aggressive"}}],
+                            "confidence": 0.7,
+                            "success_rate": 0.8
+                        }
+                    ]
+                }
+            }
+            
+            config_file = self.base_dir / "config" / "initial-config.json"
+            with open(config_file, 'w', encoding='utf-8') as f:
+                json.dump(initial_config, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Created initial configuration: {config_file}")
+            
+        except Exception as e:
+            logger.error(f"Error setting up initial data: {e}")
+    
+    def setup_monitoring(self):
+        """设置监控系统"""
+        try:
+            # 创建监控配置文件
+            monitoring_config = {
+                "metrics": {
+                    "collection_interval": 60,  # 秒
+                    "retention_days": 30,
+                    "alerting": {
+                        "enabled": True,
+                        "channels": ["log", "file"],
+                        "thresholds": {
+                            "success_rate": 0.9,
+                            "execution_time": 300,
+                            "resource_usage": 0.8
+                        }
+                    }
+                },
+                "logging": {
+                    "level": "INFO",
+                    "file_rotation": True,
+                    "max_file_size": "100MB"
+                }
+            }
+            
+            monitoring_file = self.base_dir / "config" / "monitoring-config.json"
+            with open(monitoring_file, 'w', encoding='utf-8') as f:
+                json.dump(monitoring_config, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Created monitoring configuration: {monitoring_file}")
+            
+        except Exception as e:
+            logger.error(f"Error setting up monitoring: {e}")
+    
+    def setup_backup_system(self):
+        """设置备份系统"""
+        try:
+            backup_config = {
+                "schedule": {
+                    "daily": True,
+                    "weekly": True,
+                    "monthly": True
+                },
+                "retention": {
+                    "daily": 7,
+                    "weekly": 4,
+                    "monthly": 12
+                },
+                "targets": {
+                    "local": True,
+                    "cloud": False
+                },
+                "compression": {
+                    "enabled": True,
+                    "algorithm": "gzip"
+                }
+            }
+            
+            backup_file = self.base_dir / "config" / "backup-config.json"
+            with open(backup_file, 'w', encoding='utf-8') as f:
+                json.dump(backup_config, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Created backup configuration: {backup_file}")
+            
+        except Exception as e:
+            logger.error(f"Error setting up backup system: {e}")
+    
+    def create_readme(self):
+        """创建 README 文件"""
+        readme_content = """# Auto Ops System - 完全自动化运维系统
+
+## 系统概述
+
+Auto Ops System 是一个基于人工智能的完全自动化运维系统，实现了从基础优化到高级智能的完整演进路径。
+
+## 系统架构
+
+### 核心组件
+
+1. **智能监控和决策层**
+   - 健康检查系统
+   - 机会分析引擎
+   - 故障预测模型
+   - 资源优化建议
+
+2. **自我学习和优化层**
+   - 强化学习引擎
+   - 策略管理系统
+   - 经验知识库
+   - 反馈循环处理器
+
+3. **跨工作流协同层**
+   - 工作流发现和分析
+   - 依赖关系管理
+   - 协作机会识别
+   - 协同执行编排
+
+4. **预测性扩展层**
+   - 工作负载分析
+   - 资源需求预测
+   - 智能伸缩策略
+   - 成本效益优化
+
+5. **业务价值优化层**
+   - 业务指标映射
+   - 价值影响计算
+   - 优化建议生成
+   - ROI监控和报告
+
+## 安装和配置
+
+### 环境要求
+- Python 3.11+
+- SQLite 3.35+
+- GitHub Actions 环境
+
+### 快速开始
+
+1. **初始化系统**
+```bash
+python scripts/init-auto-ops.py
+```
+
+2. **配置环境变量**
+```bash
+cp .env.example .env
+# 编辑 .env 文件配置必要的环境变量
+```
+
+3. **启动监控**
+```bash
+python scripts/start-monitoring.py
+```
+
+4. **访问仪表板**
+```bash
+python scripts/start-dashboard.py
+# 访问 http://localhost:8080
+```
+
+## 配置说明
+
+### 主要配置文件
+
+1. **auto-ops-config.yaml** - 系统主配置
+2. **business-metrics-mapping.yaml** - 业务指标映射
+3. **monitoring-config.json** - 监控配置
+4. **backup-config.json** - 备份配置
+
+### 工作流文件
+
+1. **auto-ops-system.yml** - 主工作流
+2. **auto-install.yml** - 技能安装工作流
+3. **autonomous-learning.yml** - 自主学习工作流
+
+## 使用指南
+
+### 日常操作
+
+1. **查看系统状态**
+```bash
+python scripts/check-system-status.py
+```
+
+2. **查看性能报告**
+```bash
+python scripts/generate-performance-report.py
+```
+
+3. **查看优化建议**
+```bash
+python scripts/get-optimization-recommendations.py
+```
+
+### 高级功能
+
+1. **训练学习模型**
+```bash
+python scripts/train-learning-models.py
+```
+
+2. **分析协作机会**
+```bash
+python scripts/analyze-collaboration-opportunities.py
+```
+
+3. **生成业务价值报告**
+```bash
+python scripts/generate-business-value-report.py
+```
+
+## 监控和告警
+
+### 监控指标
+- 系统健康状态
+- 工作流执行性能
+- 资源使用情况
+- 业务价值指标
+
+### 告警渠道
+- 日志文件
+- 电子邮件
+- Slack 通知
+- Webhook
+
+## 维护和备份
+
+### 定期维护
+- 每日性能优化
+- 每周数据清理
+- 每月系统评估
+
+### 备份策略
+- 每日增量备份
+- 每周完整备份
+- 每月归档备份
+
+## 故障排除
+
+### 常见问题
+
+1. **数据库连接失败**
+   - 检查数据库文件权限
+   - 检查磁盘空间
+   - 检查 SQLite 版本
+
+2. **工作流执行失败**
+   - 检查 GitHub Actions 配置
+   - 检查环境变量
+   - 检查依赖包版本
+
+3. **学习模型训练失败**
+   - 检查训练数据
+   - 检查内存使用
+   - 检查 Python 包依赖
+
+### 获取帮助
+
+1. **查看日志**
+```bash
+tail -f logs/system.log
+```
+
+2. **运行诊断**
+```bash
+python scripts/run-diagnostics.py
+```
+
+3. **联系支持**
+- 查看文档: docs/
+- 提交 Issue: GitHub Issues
+- 社区讨论: Discord
+
+## 版本历史
+
+### v1.0.0 (2026-03-07)
+- 初始版本发布
+- 完成三级优化架构
+- 实现核心自动化功能
+
+## 许可证
+
+MIT License
+
+## 贡献指南
+
+欢迎贡献代码、报告问题或提出改进建议。请查看 CONTRIBUTING.md 获取详细信息。
+
+---
+
+*系统初始化时间: {init_time}*
+""".format(init_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        readme_file = self.base_dir / "AUTO_OPS_README.md"
+        with open(readme_file, 'w', encoding='utf-8') as f:
+            f.write(readme_content)
+        
+        logger.info(f"Created README file: {readme_file}")
+    
+    def run_validation(self):
+        """运行验证检查"""
+        logger.info("Running validation checks...")
+        
+        validation_results = {
+            "directories": self._validate_directories(),
+            "config_files": self._validate_config_files(),
+            "database": self._validate_database(),
+            "scripts": self._validate_scripts()
+        }
+        
+        # 生成验证报告
+        report = {
+            "timestamp": datetime.now().isoformat(),
+            "system": "Auto Ops System",
+            "version": "1.0.0",
+            "validation_results": validation_results,
+            "summary": self._generate_validation_summary(validation_results)
+        }
+        
+        report_file = self.base_dir / "reports" / "initial-validation-report.json"
+        with open(report_file, 'w', encoding='utf-8') as f:
+            json.dump(report, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"Validation report saved: {report_file}")
+        
+        return validation_results
+    
+    def _validate_directories(self):
+        """验证目录结构"""
+        required_dirs = [
+            "data", "config", "scripts", "insights", "predictions",
+            "schedule", "recommendations", "logs", "reports"
+        ]
+        
+        results = {}
+        for dir_name in required_dirs:
+            dir_path = self.base_dir / dir_name
+            exists = dir_path.exists() and dir_path.is_dir()
+            results[dir_name] = {
+                "exists": exists,
+                "path": str(dir_path)
+            }
+        
+        return results
+    
+    def _validate_config_files(self):
+        """验证配置文件"""
+        required_files = [
+            "config/auto-ops-config.yaml",
+            "config/business-metrics-mapping.yaml",
+            ".github/workflows/auto-ops-system.yml"
+        ]
+        
+        results = {}
+        for file_path in required_files:
+            full_path = self.base_dir / file_path
+            exists = full_path.exists() and full_path.is_file()
+            
+            if exists:
+                try:
+                    if file_path.endswith('.yaml') or file_path.endswith('.yml'):
+                        with open(full_path, 'r', encoding='utf-8') as f:
+                            content = yaml.safe_load(f)
+                        valid = content is not None
+                    else:
+                        valid = True
+                except Exception as e:
+                    valid = False
+                    logger.error(f"Error validating {file_path}: {e}")
+            else:
+                valid = False
+            
+            results[file_path] = {
+                "exists": exists,
+                "valid": valid,
+                "path": str(full_path)
+            }
+        
+        return results
+    
+    def _validate_database(self):
+        """验证数据库"""
+        db_path = self.base_dir / "data" / "performance-metrics.db"
+        
+        try:
+            if db_path.exists():
+                conn = sqlite3.connect(db_path)
+                cursor = conn.cursor()
+                
+                # 检查表是否存在
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                tables = cursor.fetchall()
+                
+                conn.close()
+                
+                return {
+                    "exists": True,
+                    "tables": [table[0] for table in tables],
+                    "table_count": len(tables),
+                    "path": str(db_path)
+                }
+            else:
+                return {
+                    "exists": False,
+                    "tables": [],
+                    "table_count": 0,
+                    "path": str(db_path)
+                }
+                
+        except Exception as e:
+            logger.error(f"Error validating database: {e}")
+            return {
+                "exists": False,
+                "error": str(e),
+                "path":
