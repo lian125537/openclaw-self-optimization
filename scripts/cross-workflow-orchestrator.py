@@ -17,6 +17,15 @@ import logging
 import asyncio
 import aiohttp
 
+# 导入稳定性组件
+try:
+    from retry_decorator import retry, retry_network, retry_critical
+    from circuit_breaker import CircuitBreakerManager
+    STABILITY_AVAILABLE = True
+except ImportError:
+    STABILITY_AVAILABLE = False
+    logger.warning("稳定性组件不可用，系统将以基本模式运行")
+
 # 配置日志
 logging.basicConfig(
     level=logging.INFO,
@@ -422,4 +431,4 @@ class CrossWorkflowOrchestrator:
             return 0.0
         
         # 计算余弦相似度
-        all_types = set(res1
+        all_types = set(res1.keys()) | set(res2.keys())

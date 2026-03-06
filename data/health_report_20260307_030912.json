@@ -1,0 +1,191 @@
+{
+  "timestamp": "2026-03-07T03:09:12.870146",
+  "overall_status": "degraded",
+  "total_checks": 10,
+  "successful_checks": 9,
+  "degraded_checks": 0,
+  "unhealthy_checks": 1,
+  "unknown_checks": 0,
+  "response_time": 0.4732844829559326,
+  "checks": [
+    {
+      "check_name": "directory_scripts",
+      "status": "healthy",
+      "severity": "high",
+      "message": "目录状态正常",
+      "details": {
+        "path": "scripts",
+        "exists": true,
+        "is_dir": true,
+        "file_count": 37,
+        "dir_count": 2,
+        "total_items": 39,
+        "missing_files": []
+      },
+      "timestamp": "2026-03-07T03:09:12.398773",
+      "response_time": 0.001911163330078125
+    },
+    {
+      "check_name": "directory_config",
+      "status": "healthy",
+      "severity": "high",
+      "message": "目录状态正常",
+      "details": {
+        "path": "config",
+        "exists": true,
+        "is_dir": true,
+        "file_count": 4,
+        "dir_count": 0,
+        "total_items": 4,
+        "missing_files": []
+      },
+      "timestamp": "2026-03-07T03:09:12.399278",
+      "response_time": 0.0005052089691162109
+    },
+    {
+      "check_name": "directory_workflows",
+      "status": "healthy",
+      "severity": "high",
+      "message": "目录状态正常",
+      "details": {
+        "path": ".github\\workflows",
+        "exists": true,
+        "is_dir": true,
+        "file_count": 16,
+        "dir_count": 0,
+        "total_items": 16,
+        "missing_files": []
+      },
+      "timestamp": "2026-03-07T03:09:12.399919",
+      "response_time": 0.0006413459777832031
+    },
+    {
+      "check_name": "directory_data",
+      "status": "healthy",
+      "severity": "high",
+      "message": "目录状态正常",
+      "details": {
+        "path": "data",
+        "exists": true,
+        "is_dir": true,
+        "file_count": 10,
+        "dir_count": 0,
+        "total_items": 10,
+        "missing_files": []
+      },
+      "timestamp": "2026-03-07T03:09:12.399919",
+      "response_time": 0.0
+    },
+    {
+      "check_name": "file_auto-ops-config.yaml",
+      "status": "healthy",
+      "severity": "high",
+      "message": "文件状态正常",
+      "details": {
+        "path": "config\\auto-ops-config.yaml",
+        "exists": true,
+        "is_file": true,
+        "file_size": 8212,
+        "content_valid": true,
+        "last_modified": "2026-03-07T01:25:09.999794"
+      },
+      "timestamp": "2026-03-07T03:09:12.401061",
+      "response_time": 0.0011410713195800781
+    },
+    {
+      "check_name": "file_business-metrics-mapping.yaml",
+      "status": "healthy",
+      "severity": "high",
+      "message": "文件状态正常",
+      "details": {
+        "path": "config\\business-metrics-mapping.yaml",
+        "exists": true,
+        "is_file": true,
+        "file_size": 10517,
+        "content_valid": true,
+        "last_modified": "2026-03-07T01:26:56.555226"
+      },
+      "timestamp": "2026-03-07T03:09:12.401061",
+      "response_time": 0.0
+    },
+    {
+      "check_name": "script_self-learning-engine.py",
+      "status": "healthy",
+      "severity": "high",
+      "message": "脚本状态正常",
+      "details": {
+        "path": "scripts\\self-learning-engine.py",
+        "exists": true,
+        "file_size": 19063,
+        "line_count": 503,
+        "has_shebang": true,
+        "import_count": 10,
+        "importable": true
+      },
+      "timestamp": "2026-03-07T03:09:12.763611",
+      "response_time": 0.3625502586364746
+    },
+    {
+      "check_name": "script_cross-workflow-orchestrator.py",
+      "status": "unhealthy",
+      "severity": "high",
+      "message": "脚本语法错误: '(' was never closed (cross-workflow-orchestrator.py, line 425)",
+      "details": {
+        "path": "scripts\\cross-workflow-orchestrator.py",
+        "exists": true,
+        "error_type": "syntax_error",
+        "error": "'(' was never closed (cross-workflow-orchestrator.py, line 425)",
+        "importable": false
+      },
+      "timestamp": "2026-03-07T03:09:12.765604",
+      "response_time": 0.0019936561584472656
+    },
+    {
+      "check_name": "script_init-auto-ops.py",
+      "status": "healthy",
+      "severity": "high",
+      "message": "脚本状态正常",
+      "details": {
+        "path": "scripts\\init-auto-ops.py",
+        "exists": true,
+        "file_size": 10011,
+        "line_count": 289,
+        "has_shebang": false,
+        "import_count": 8,
+        "importable": true
+      },
+      "timestamp": "2026-03-07T03:09:12.769053",
+      "response_time": 0.003448486328125
+    },
+    {
+      "check_name": "system_resources",
+      "status": "healthy",
+      "severity": "medium",
+      "message": "系统资源正常",
+      "details": {
+        "cpu_percent": 10.7,
+        "memory_percent": 73.9,
+        "memory_available_gb": 16.088279724121094,
+        "memory_total_gb": 61.61802291870117,
+        "disk_percent": 82.8,
+        "disk_free_gb": 80.65770721435547,
+        "disk_total_gb": 469.23339462280273,
+        "issues": []
+      },
+      "timestamp": "2026-03-07T03:09:12.870146",
+      "response_time": 0.10109329223632812
+    }
+  ],
+  "summary": {
+    "critical_issues": [
+      {
+        "check": "script_cross-workflow-orchestrator.py",
+        "message": "脚本语法错误: '(' was never closed (cross-workflow-orchestrator.py, line 425)",
+        "severity": "high"
+      }
+    ],
+    "warnings": [],
+    "critical_count": 1,
+    "warning_count": 0
+  }
+}

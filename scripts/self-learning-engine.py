@@ -16,6 +16,15 @@ from enum import Enum
 import sqlite3
 from pathlib import Path
 
+# 导入稳定性组件
+try:
+    from retry_decorator import retry, retry_network, retry_critical
+    from circuit_breaker import CircuitBreakerManager
+    STABILITY_AVAILABLE = True
+except ImportError:
+    STABILITY_AVAILABLE = False
+    logger.warning("稳定性组件不可用，系统将以基本模式运行")
+
 # 配置日志
 logging.basicConfig(
     level=logging.INFO,
@@ -76,6 +85,7 @@ class SelfLearningEngine:
         self.setup_knowledge_base()
         self.load_policies()
     
+    @retry
     def setup_knowledge_base(self):
         """设置知识库"""
         try:
@@ -150,6 +160,7 @@ class SelfLearningEngine:
         
         self.conn.commit()
     
+    @retry
     def load_policies(self):
         """加载优化策略"""
         try:
@@ -393,6 +404,7 @@ class SelfLearningEngine:
         
         return relaxed
     
+    @retry
     def _save_policy(self, policy: OptimizationPolicy):
         """保存策略"""
         try:

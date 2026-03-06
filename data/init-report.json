@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-07T01:53:59.796269",
+  "timestamp": "2026-03-07T02:52:01.476942",
   "environment": {
     "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
     "current_dir": "C:\\Users\\yodat\\.openclaw\\workspace\\openclaw-self-optimization",
@@ -26,9 +26,9 @@
     "path": "C:\\Users\\yodat\\.openclaw\\workspace\\openclaw-self-optimization\\data\\auto-ops.db"
   },
   "validations": {
-    "has_workflows": 13,
-    "has_scripts": 26,
-    "git_clean": false
+    "has_workflows": 15,
+    "has_scripts": 28,
+    "git_clean": true
   },
   "summary": {
     "success": false,

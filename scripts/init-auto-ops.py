@@ -13,6 +13,14 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 
+# 导入稳定性组件
+try:
+    from retry_decorator import retry, retry_network, retry_critical
+    from circuit_breaker import CircuitBreakerManager
+    STABILITY_AVAILABLE = True
+except ImportError:
+    STABILITY_AVAILABLE = False
+
 # 配置日志
 logging.basicConfig(
     level=logging.INFO,
@@ -32,6 +40,7 @@ class AutoOpsInitializer:
             "status": "pending"
         }
     
+    @retry_critical
     def run(self):
         """执行完整初始化流程"""
         logger.info("="*60)
@@ -111,6 +120,7 @@ class AutoOpsInitializer:
         self.config["loaded_configs"] = loaded
         return f"加载了 {len(loaded)} 个配置文件"
     
+    @retry
     def init_database(self):
         """初始化数据库"""
         db_path = self.base_path / "data" / "auto-ops.db"
@@ -168,6 +178,7 @@ class AutoOpsInitializer:
             "path": str(db_path)
         }
     
+    @retry
     def create_directories(self):
         """创建必要的目录结构"""
         dirs_to_create = [
