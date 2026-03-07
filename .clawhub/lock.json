@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "camera": {
+      "version": "1.0.0",
+      "installedAt": 1772867548009
+    },
+    "vision-sandbox": {
+      "version": "1.1.0",
+      "installedAt": 1772867552618
+    },
+    "computer-vision-expert": {
+      "version": "1.0.0",
+      "installedAt": 1772867565144
+    },
+    "automation-workflows": {
+      "version": "0.1.0",
+      "installedAt": 1772867632264
+    },
+    "ai-web-automation": {
+      "version": "1.0.0",
+      "installedAt": 1772867642127
+    },
+    "android-remote-control": {
+      "version": "1.0.0",
+      "installedAt": 1772867649824
+    }
+  }
+}
