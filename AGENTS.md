@@ -126,6 +126,9 @@ Skills provide your tools. When you need one, check its `SKILL.md`. Keep local n
 - **automation-workflows**: Design and implement automation workflows
 - **ai-web-automation**: Web automation service (forms, scraping, testing)
 - **android-remote-control**: Remote control Android devices via uiautomator2
+- **file-manager**: File management operations
+- **calendar**: Calendar management
+- **email-daily-summary**: Email daily summary generation
 
 **🎭 Voice Storytelling:** If you have `sag` (ElevenLabs TTS), use voice for stories, movie summaries, and "storytime" moments! Way more engaging than walls of text. Surprise people with funny voices.
 

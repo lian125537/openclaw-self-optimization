@@ -24,6 +24,18 @@
     "android-remote-control": {
       "version": "1.0.0",
       "installedAt": 1772867649824
+    },
+    "file-manager": {
+      "version": "1.0.0",
+      "installedAt": 1772868933384
+    },
+    "calendar": {
+      "version": "1.0.0",
+      "installedAt": 1772868937274
+    },
+    "email-daily-summary": {
+      "version": "0.1.0",
+      "installedAt": 1772868943248
     }
   }
 }

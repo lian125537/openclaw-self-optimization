@@ -1,0 +1,13 @@
+
+> {"body":"# 绯荤粺娴嬭瘯鎶ュ憡\n\n**鐢熸垚鏃堕棿**: 2026-03-06 18:47:59\n\n## 馃搳 鎬讳綋鐘舵€乗n\n- **鐘舵€?*: ERROR\n- **鎴愬姛**: 3\n- **璀﹀憡**: 0\n- **閿欒**: 2\n\n## 馃敡 娴嬭瘯缁撴灉\n\n### 
+鉂?Github Connection\n- **鐘舵€?*: error\n- **娑堟伅**: GitHub 杩炴帴澶辫触: Command '\"C:\\Program Files\\GitHub CLI\\gh.exe\" auth status' returned non-zero exit status 127.\n\n### 鉂?Openclaw Statu
+s\n- **鐘舵€?*: error\n- **娑堟伅**: OpenClaw 鐘舵€佹鏌ュけ璐? Command 'openclaw status' returned non-zero exit status 127.\n\n### 鉁?Workflow Files\n- **鐘舵€?*: success\n- **娑堟伅**: 鎵€鏈夊伐浣滄
+祦鏂囦欢閮藉瓨鍦╘n- **鍙戠幇**: skill-recommendation.yml, auto-install.yml, immediate-action.yml, learning-cycle-shortener.yml, autonomous-learning.yml, auto-ops-system.yml, auto-ops-system-simple.yml
+, daily-analysis.yml, optimize-workflow.yml, geometric-growth.yml, test-workflow.yml, auto-ops-system-final.yml, github-learning.yml, setup-secrets.yml, test-system.yml\n\n### 鉁?Script Files\n- **鐘
+舵€?*: success\n- **娑堟伅**: 鎵€鏈夎剼鏈枃浠堕兘瀛樺湪\n- **鍙戠幇**: recommend-skills.py, self-learning-engine.py, init-repo.py, learning-cycle-shortener.py, test-capabilities.py, simple-auto-insta
+ll.py, results-aggregator-advanced.py, test-optimization.py, intelligent-monitor.py, test-workflow.py, optimized-auto-install.py, fix-workflows.py, analyze-capabilities-robust.py, analyze-capabilities
+-fixed.py, immediate-action.py, init-auto-ops.py, auto-install.py, github-learning.py, analyze-capabilities.py, cross-workflow-orchestrator.py, geometric-growth.py, optimize-workflow.py, simple-diagno
+stic.py, validate-workflows.py, simple-recommend-test.py, autonomous-learning.py, test-system.py, simple-test.py\n\n### 鉁?Data Directory\n- **鐘舵€?*: success\n- **娑堟伅**: 鏁版嵁鐩綍瀛樺湪\n\n\n\n
+## 馃挕 鎺ㄨ崘琛屽姩\n\n### 馃敶 fix_errors\n- **鎻忚堪**: 淇娴嬭瘯涓彂鐜扮殑閿欒\n- **浼樺厛绾?*: high\n\n\n\n## 馃搱 绯荤粺鐘舵€佹€荤粨\n\n鍩轰簬娴嬭瘯缁撴灉锛歕n- **GitHub 杩炴帴**: 闇€瑕佹鏌
+n- **OpenClaw 鐘舵€?*: 闇€瑕佹鏌n- **宸ヤ綔娴佹枃浠?*: 瀹屾暣\n- **鑴氭湰鏂囦欢**: 瀹屾暣\n\n---\n*鏈姤鍛婄敱 OpenClaw 鑷垜浼樺寲绯荤粺鑷姩鐢熸垚*\n"}
+
