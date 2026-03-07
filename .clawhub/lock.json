@@ -36,6 +36,26 @@
     "email-daily-summary": {
       "version": "0.1.0",
       "installedAt": 1772868943248
+    },
+    "performance-profiler": {
+      "version": "1.0.0",
+      "installedAt": 1772869137026
+    },
+    "response-speed-test": {
+      "version": "1.0.0",
+      "installedAt": 1772869145348
+    },
+    "llm-speedtest": {
+      "version": "1.0.0",
+      "installedAt": 1772869152129
+    },
+    "token-manager": {
+      "version": "1.2.0",
+      "installedAt": 1772869237807
+    },
+    "token-budget-monitor": {
+      "version": "1.0.0",
+      "installedAt": 1772869244812
     }
   }
 }

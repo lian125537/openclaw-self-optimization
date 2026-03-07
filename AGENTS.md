@@ -130,6 +130,13 @@ Skills provide your tools. When you need one, check its `SKILL.md`. Keep local n
 - **calendar**: Calendar management
 - **email-daily-summary**: Email daily summary generation
 
+### ⚡ Performance Skills Installed (性能优化)
+- **performance-profiler**: Performance profiling and optimization
+- **response-speed-test**: Response speed testing and optimization
+- **llm-speedtest**: LLM speed testing and optimization
+- **token-manager**: Token usage monitoring and cost optimization
+- **token-budget-monitor**: Token budget monitoring and alerts
+
 **🎭 Voice Storytelling:** If you have `sag` (ElevenLabs TTS), use voice for stories, movie summaries, and "storytime" moments! Way more engaging than walls of text. Surprise people with funny voices.
 
 **📝 Platform Formatting:**
