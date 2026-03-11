@@ -1,0 +1,15 @@
+{
+  "steve-jobs": {
+    "skills": [
+      "product-design",
+      "visionary-thinking",
+      "reality-distortion-field",
+      "presentation-mastery",
+      "simplicity-obsession"
+    ],
+    "models": {
+      "primary": "deepseek/deepseek-chat",
+      "visionary": "gpt-4"
+    }
+  }
+}
