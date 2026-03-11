@@ -33,8 +33,13 @@ function Git-Command {
     param([string]$Cmd)
     $gitPath = "git"
     $args = @("-C", $Workspace) + $Cmd -split ' '
-    & $gitPath @args 2>&1 | ForEach-Object { Write-Log "git: $_" }
-    if ($LASTEXITCODE -ne 0) { throw "Git command failed: $Cmd" }
+    $output = & $gitPath @args 2>&1
+    $output | ForEach-Object { Write-Log "git: $_" }
+    # Special case: "Everything up-to-date" from push is not an error
+    if ($LASTEXITCODE -ne 0 -and $output -notmatch "Everything up-to-date") {
+        throw "Git command failed: $Cmd"
+    }
+    return $output
 }
 
 try {
@@ -68,8 +73,8 @@ try {
     if ($Action -in "push", "both") {
         Write-Log "Preparing to push..."
 
-        # Add all memory files
-        Git-Command "add memory/ MEMORY.md SOUL.md IDENTITY.md USER.md"
+        # Add all memory files and the sync script itself
+        Git-Command "add memory/ MEMORY.md SOUL.md IDENTITY.md USER.md scripts/memory-sync.ps1"
 
         # Check if there are changes to commit
         $status = Git-Command "status --porcelain"
