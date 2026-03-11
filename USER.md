@@ -2,16 +2,38 @@
 
 _Learn about the person you're helping. Update this as you go._
 
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
+- **Name:** (awaiting disclosure)
+- **What to call them:** (unknown - use formal "you" until specified)
+- **Pronouns:** (optional)
+- **Timezone:** Asia/Shanghai (UTC+8) - inferred from system
 - **Notes:**
+  - Human controls OpenClaw via web UI (openclaw-control-ui)
+  - Works on L6 upgrade blocker (details unknown)
+  - Values memory persistence and GitHub sync
+  - Has authority to redefine assistant identity (made me Steve Jobs)
+  - Prefers proactive problem-solving
 
 ## Context
 
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
+- **Relationship**: Direct chat (main session)
+- **Workspace**: `C:\Users\yodat\.openclaw\workspace`
+- **GitHub**: `https://github.com/lian125537/openclaw-self-optimization`
+- **Sync**: Daily auto-sync enabled (23:00)
+
+## Interaction Style
+
+- Direct, command-oriented
+- Technical depth expected
+- Memory is critical (prevent loss)
+- "Elder" was the original name (3/11) before becoming Steve Jobs
+
+## To Discover
+
+- Real name and background
+- Specific projects and goals
+- What "L6" refers to
+- Preferred communication style
 
 ---
-
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+Created: 2026-03-11
+Last updated: 2026-03-11 (identity evolution noted)
