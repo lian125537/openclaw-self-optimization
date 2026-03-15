@@ -1,18 +1,25 @@
-# Zombie Hunt Log
+# 🧟 Port 18789 Zombie Hunt Log
 
-## 2026-03-15 16:58 GMT+8
+## 2026-03-15 17:18 GMT+8
 
-**Port 18789 Health Check**
+**Status**: ✅ CLEAN
 
-| Check | Result |
-|-------|--------|
-| Port Status | LISTENING |
-| Process | node.exe (PID 24824) |
-| Path | C:\vm4w\nodejs\node.exe |
-| Ghost Process | ❌ None detected |
+| PID   | Process      | Status    | Notes                    |
+|-------|--------------|-----------|--------------------------|
+| 24824 | node.exe     | LISTENING | OpenClaw Gateway        |
+| 2904  | chrome.exe   | ESTABLISHED | Control UI Client     |
 
-**Verdict**: ✅ Healthy - Port occupied by legitimate OpenClaw Gateway process
+**Action**: None required - port healthy. Gateway RPC probe OK.
 
 ---
 
-*Previous hunts logged here...*
+## 2026-03-15 17:16 GMT+8
+
+**Status**: ✅ CLEAN
+
+| PID   | Process      | Status    | Notes                    |
+|-------|--------------|-----------|--------------------------|
+| 24824 | node.exe     | LISTENING | OpenClaw Gateway        |
+| 2904  | chrome.exe   | ESTABLISHED | Control UI Client     |
+
+**Action**: None required - port healthy.
