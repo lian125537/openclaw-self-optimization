@@ -1,0 +1,207 @@
+name: Auto Install Skills (Optimized)
+
+on:
+  workflow_dispatch:  # 手动触发
+  schedule:
+    # 每周一和周四运行（UTC 时间 18:00 = 北京时间次日凌晨 2:00）
+    - cron: '0 18 * * 1,4'
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    
+    # 启用缓存以加速后续运行
+    env:
+      PIP_CACHE_DIR: ${{ github.workspace }}/.cache/pip
+      NPM_CONFIG_CACHE: ${{ github.workspace }}/.cache/npm
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Cache Python dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PIP_CACHE_DIR }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Cache Node.js dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.NPM_CONFIG_CACHE }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+    
+    - name: Setup Node.js with caching
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+        
+    - name: Setup Python with caching
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml requests
+        
+    - name: Install ClawHub CLI (optimized)
+      id: install-clawhub
+      run: |
+        echo "Installing ClawHub CLI with multiple fallback methods..."
+        
+        # 方法1: 使用 npm 全局安装
+        echo "Method 1: npm global install"
+        npm install -g clawhub@latest || echo "npm install failed, trying npx..."
+        
+        # 方法2: 使用 npx（备用）
+        echo "Method 2: npx execution"
+        npx clawhub@latest --version && echo "npx succeeded" || echo "npx failed"
+        
+        # 方法3: 直接下载二进制（最后手段）
+        echo "Method 3: direct download (fallback)"
+        curl -sL https://registry.npmjs.org/clawhub/-/clawhub-1.0.0.tgz | tar -xz || echo "Download failed"
+        
+        # 验证安装
+        if command -v clawhub &> /dev/null; then
+          echo "clawhub_path=$(which clawhub)" >> $GITHUB_OUTPUT
+          echo "status=success" >> $GITHUB_OUTPUT
+        elif npx --version &> /dev/null; then
+          echo "clawhub_path=npx" >> $GITHUB_OUTPUT
+          echo "status=fallback" >> $GITHUB_OUTPUT
+        else
+          echo "clawhub_path=none" >> $GITHUB_OUTPUT
+          echo "status=failed" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Run optimized auto install
+      id: run-install
+      run: |
+        # 使用外部脚本，避免内嵌
+        python scripts/optimized-auto-install.py
+        
+    - name: Upload install report
+      uses: actions/upload-artifact@v4
+      with:
+        name: install-report-${{ github.run_id }}
+        path: |
+          data/install-report.json
+          docs/install-report.md
+        retention-days: 14
+        if-no-files-found: warn
+        
+    - name: Create GitHub Issue with template
+      if: success()
+      uses: actions/github-script@v7
+      env:
+        INSTALL_STATUS: ${{ steps.run-install.outputs.status }}
+        SUCCESS_COUNT: ${{ steps.run-install.outputs.success_count }}
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          try {
+            const reportPath = 'docs/install-report.md';
+            
+            if (!fs.existsSync(reportPath)) {
+              console.log('Report file not found, creating minimal issue');
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `技能安装报告 - ${new Date().toISOString().split('T')[0]}`,
+                body: `## 安装状态报告\n\n安装状态: ${process.env.INSTALL_STATUS}\n成功数量: ${process.env.SUCCESS_COUNT}\n\n*报告文件未生成，可能是脚本执行问题*`,
+                labels: ['auto-install', 'report', 'warning']
+              });
+              return;
+            }
+            
+            const report = fs.readFileSync(reportPath, 'utf8');
+            
+            // 使用模板生成更美观的 Issue
+            const issueBody = `
+            ## 📊 技能自动安装报告
+
+            **执行时间**: ${new Date().toISOString()}
+            **工作流**: [${context.workflow}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            
+            ---
+            
+            ${report}
+            
+            ### 🔧 技术详情
+            - **运行器**: ${context.runnerName}
+            - **触发方式**: ${context.eventName}
+            - **提交**: ${context.sha?.substring(0, 7) || 'N/A'}
+            
+            ---
+            
+            *本报告由 GitHub Actions 自动生成*
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `技能安装报告 - ${new Date().toISOString().split('T')[0]}`,
+              body: issueBody,
+              labels: ['auto-install', 'report', 'automation']
+            });
+            
+            console.log('Issue created successfully');
+          } catch (error) {
+            console.log('Error creating issue:', error.message);
+            // 即使创建 Issue 失败，工作流也不应该失败
+          }
+          
+    - name: Send detailed notification
+      if: always()
+      run: |
+        echo "=== 安装执行报告 ==="
+        echo "工作流: ${{ github.workflow }}"
+        echo "运行ID: ${{ github.run_id }}"
+        echo "触发方式: ${{ github.event_name }}"
+        echo "执行时间: $(date -Iseconds)"
+        
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "✅ 技能自动安装完成！"
+          echo "📊 报告已上传到 GitHub Actions Artifacts"
+          echo "📝 新 Issue 已创建"
+        else
+          echo "❌ 安装执行失败"
+          echo "🔍 请检查错误日志和 Artifacts"
+        fi
+        
+    - name: Upload comprehensive logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failure-logs-${{ github.run_id }}
+        path: |
+          /home/runner/.npm/_logs/
+          /home/runner/.cache/
+          scripts/
+          data/
+          docs/
+        retention-days: 30
+        if-no-files-found: warn
+        
+    - name: Cleanup cache (optional)
+      if: always()
+      run: |
+        # 清理不必要的缓存文件
+        echo "Cleaning up temporary files..."
+        rm -rf /home/runner/.npm/_logs/*.log 2>/dev/null || true
+        rm -rf /tmp/* 2>/dev/null || true

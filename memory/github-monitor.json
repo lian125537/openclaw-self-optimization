@@ -1,0 +1,10 @@
+{
+  "monitored_repos": [
+    {
+      "owner": "lian125537",
+      "repo": "openclaw-self-optimization",
+      "lastIssueCount": 4,
+      "lastCheck": "2026-03-06T12:38:00Z"
+    }
+  ]
+}

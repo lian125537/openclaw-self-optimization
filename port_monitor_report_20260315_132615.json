@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-03-15T13:26:15.809643",
+  "host": "localhost",
+  "total_ports_checked": 17,
+  "open_ports_count": 1,
+  "open_ports": [
+    "3389 (RDP)"
+  ],
+  "detailed_results": [
+    {
+      "port": 80,
+      "service": "HTTP",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 443,
+      "service": "HTTPS",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 22,
+      "service": "SSH",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 21,
+      "service": "FTP",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 23,
+      "service": "Telnet",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 25,
+      "service": "SMTP",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 53,
+      "service": "DNS",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 110,
+      "service": "POP3",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 143,
+      "service": "IMAP",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 3306,
+      "service": "MySQL",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 5432,
+      "service": "PostgreSQL",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 8080,
+      "service": "HTTP Alt",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 8443,
+      "service": "HTTPS Alt",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 3000,
+      "service": "Node.js",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 5000,
+      "service": "Flask",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 8000,
+      "service": "Python dev",
+      "status": "CLOSED",
+      "open": false
+    },
+    {
+      "port": 3389,
+      "service": "RDP",
+      "status": "OPEN",
+      "open": true
+    }
+  ]
+}

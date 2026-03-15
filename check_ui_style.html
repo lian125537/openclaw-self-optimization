@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenClaw界面检查工具</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            color: #e6e6e6;
+            font-family: 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 40, 60, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(40, 50, 80, 0.5);
+            border-radius: 10px;
+        }
+        
+        .test-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4fc3f7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-family: inherit;
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(30, 40, 60, 0.7);
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .success { color: #4caf50; }
+        .warning { color: #ff9800; }
+        .error { color: #f44336; }
+        
+        .comparison {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .ui-example {
+            flex: 1;
+            padding: 15px;
+            background: rgba(50, 60, 90, 0.6);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .ui-example img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 OpenClaw界面检查工具</h1>
+        
+        <div class="section">
+            <h2>🎯 问题：聊天画面是否统一？</h2>
+            <p><strong>答案：不一定！</strong> OpenClaw的界面可以有多种变体。</p>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 检查你的界面</h2>
+            <p>点击按钮检查当前页面的样式：</p>
+            
+            <button class="test-btn" onclick="checkStyles()">检查页面样式</button>
+            <button class="test-btn" onclick="checkLayout()">检查页面布局</button>
+            <button class="test-btn" onclick="checkElements()">检查页面元素</button>
+            
+            <div class="result" id="result"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🔄 可能的界面变体</h2>
+            <div class="comparison">
+                <div class="ui-example">
+                    <h3>标准界面</h3>
+                    <p>• 访问: localhost:18789</p>
+                    <p>• 统一设计</p>
+                    <p>• 完整功能</p>
+                </div>
+                
+                <div class="ui-example">
+                    <h3>控制面板界面</h3>
+                    <p>• openclaw-control-ui</p>
+                    <p>• 可能定制</p>
+                    <p>• 优化布局</p>
+                </div>
+                
+                <div class="ui-example">
+                    <h3>移动端界面</h3>
+                    <p>• 响应式设计</p>
+                    <p>• 触摸优化</p>
+                    <p>• 简化布局</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎨 自定义选项</h2>
+            <p><strong>可以自定义：</strong></p>
+            <ul>
+                <li>✅ 颜色主题（深色/浅色）</li>
+                <li>✅ 字体和字号</li>
+                <li>✅ 布局排列</li>
+                <li>✅ 图标样式</li>
+                <li>✅ 动画效果</li>
+            </ul>
+            
+            <p><strong>不能自定义：</strong></p>
+            <ul>
+                <li>❌ 核心功能逻辑</li>
+                <li>❌ API通信方式</li>
+                <li>❌ 安全机制</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔍 如何判断你的界面类型</h2>
+            <p>1. <strong>查看URL</strong>：不同的端口或路径可能对应不同界面</p>
+            <p>2. <strong>检查页面标题</strong>：标题可能显示界面类型</p>
+            <p>3. <strong>观察布局</strong>：比较与标准界面的差异</p>
+            <p>4. <strong>查看源代码</strong>：检查HTML/CSS结构</p>
+        </div>
+    </div>
+
+    <script>
+        function checkStyles() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<span class="warning">正在检查页面样式...</span>';
+            
+            setTimeout(() => {
+                const styles = {
+                    backgroundColor: document.body.style.backgroundColor || getComputedStyle(document.body).backgroundColor,
+                    color: document.body.style.color || getComputedStyle(document.body).color,
+                    fontFamily: document.body.style.fontFamily || getComputedStyle(document.body).fontFamily,
+                    fontSize: document.body.style.fontSize || getComputedStyle(document.body).fontSize,
+                    width: document.body.style.width || getComputedStyle(document.body).width,
+                    height: document.body.style.height || getComputedStyle(document.body).height
+                };
+                
+                let output = '📊 页面样式检查结果：\n\n';
+                for (const [key, value] of Object.entries(styles)) {
+                    output += `${key}: ${value}\n`;
+                }
+                
+                // 检查是否有自定义CSS类
+                const customClasses = Array.from(document.querySelectorAll('[class*="custom"], [class*="theme"]'))
+                    .map(el => el.className)
+                    .filter((v, i, a) => a.indexOf(v) === i);
+                
+                if (customClasses.length > 0) {
+                    output += `\n🎨 发现自定义CSS类：\n${customClasses.join('\n')}`;
+                }
+                
+                result.innerHTML = `<span class="success">${output}</span>`;
+            }, 500);
+        }
+        
+        function checkLayout() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<span class="warning">正在检查页面布局...</span>';
+            
+            setTimeout(() => {
+                const layout = {
+                    viewportWidth: window.innerWidth,
+                    viewportHeight: window.innerHeight,
+                    chatInputs: document.querySelectorAll('input[type="text"], textarea, [contenteditable="true"]').length,
+                    sendButtons: document.querySelectorAll('button, [role="button"], .send, .submit').length,
+                    messageContainers: document.querySelectorAll('.message, .chat, .conversation, .messages').length,
+                    hasSidebar: document.querySelector('.sidebar, .nav, .menu') !== null,
+                    hasHeader: document.querySelector('header, .header, .top-bar') !== null,
+                    hasFooter: document.querySelector('footer, .footer, .bottom-bar') !== null
+                };
+                
+                let output = '📐 页面布局检查结果：\n\n';
+                output += `视窗尺寸: ${layout.viewportWidth} × ${layout.viewportHeight}\n`;
+                output += `聊天输入框: ${layout.chatInputs} 个\n`;
+                output += `发送按钮: ${layout.sendButtons} 个\n`;
+                output += `消息容器: ${layout.messageContainers} 个\n`;
+                output += `侧边栏: ${layout.hasSidebar ? '✅ 有' : '❌ 无'}\n`;
+                output += `顶部栏: ${layout.hasHeader ? '✅ 有' : '❌ 无'}\n`;
+                output += `底部栏: ${layout.hasFooter ? '✅ 有' : '❌ 无'}\n`;
+                
+                // 判断界面类型
+                let uiType = '未知界面';
+                if (layout.chatInputs > 0 && layout.sendButtons > 0) {
+                    uiType = '聊天界面';
+                } else if (layout.hasSidebar && layout.hasHeader) {
+                    uiType = '控制面板界面';
+                } else if (layout.viewportWidth < 768) {
+                    uiType = '移动端界面';
+                }
+                
+                output += `\n🎯 判断结果: ${uiType}`;
+                
+                result.innerHTML = `<span class="success">${output}</span>`;
+            }, 500);
+        }
+        
+        function checkElements() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<span class="warning">正在检查页面元素...</span>';
+            
+            setTimeout(() => {
+                // 查找OpenClaw特定元素
+                const openclawElements = {
+                    'openclaw标识': document.querySelectorAll('[class*="openclaw"], [id*="openclaw"]').length,
+                    '网关相关': document.querySelectorAll('[class*="gateway"], [id*="gateway"]').length,
+                    '聊天相关': document.querySelectorAll('[class*="chat"], [class*="message"]').length,
+                    '工具相关': document.querySelectorAll('[class*="tool"], [class*="action"]').length,
+                    '状态显示': document.querySelectorAll('[class*="status"], [class*="info"]').length
+                };
+                
+                let output = '🔧 页面元素检查结果：\n\n';
+                for (const [key, value] of Object.entries(openclawElements)) {
+                    output += `${key}: ${value} 个\n`;
+                }
+                
+                // 检查页面标题和meta信息
+                output += `\n📄 页面信息：\n`;
+                output += `标题: "${document.title}"\n`;
+                output += `URL: "${window.location.href}"\n`;
+                
+                // 检查是否有favicon
+                const favicon = document.querySelector('link[rel*="icon"]');
+                if (favicon) {
+                    output += `图标: ${favicon.href}\n`;
+                }
+                
+                result.innerHTML = `<span class="success">${output}</span>`;
+            }, 500);
+        }
+        
+        // 页面加载后自动检查
+        window.onload = function() {
+            setTimeout(checkLayout, 1000);
+        };
+    </script>
+</body>
+</html>

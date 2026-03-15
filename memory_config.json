@@ -1,0 +1,28 @@
+{
+  "auto_capture": {
+    "enabled": true,
+    "triggers": [
+      "重要决策",
+      "技术配置",
+      "合作约定",
+      "学习经验",
+      "待办事项"
+    ],
+    "min_importance": 3
+  },
+  "retrieval": {
+    "semantic_search": true,
+    "recall_threshold": 0.7,
+    "max_results": 5
+  },
+  "storage": {
+    "daily_files": true,
+    "long_term_file": "MEMORY.md",
+    "backup_enabled": true
+  },
+  "maintenance": {
+    "weekly_review": true,
+    "archive_old": 30,
+    "compress_old": 90
+  }
+}

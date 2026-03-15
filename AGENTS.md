@@ -230,3 +230,68 @@ The goal: Be helpful without being annoying. Check in a few times a day, do usef
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
+
+## 🦞 Self-Evolution System (Activated: 2026-03-15)
+
+**Status**: 🟢 ACTIVE - proactive-agent 自我进化模式启用
+
+### 系统组件
+
+#### 1. 错误自动捕获系统
+- **存储路径**: `.learnings/ERRORS.md`
+- **触发条件**: 所有工具调用错误、执行失败、用户纠正
+- **等级分类**: 🔴Critical 🟡Major 🟠Minor 🔵Optimization
+- **自动脚本**: `.learnings\record_error.ps1`
+
+#### 2. 学习自动记录系统  
+- **存储路径**: `.learnings/LEARNINGS.md`
+- **捕获内容**: 技能掌握、工具精通、认知洞察、优化创新、模式识别、安全强化
+- **自动脚本**: `.learnings\record_learning.ps1`
+
+#### 3. 周度总结自动化
+- **频率**: 每周日 00:00 (亚洲/上海时区)
+- **执行者**: 独立代理 (isolated agentTurn)
+- **输出文件**: `.learnings/WEEKLY_SUMMARY.md`
+- **Cron ID**: `bac6e36c-38f0-4872-8bf0-abbcf82ad640`
+
+### 集成工作流
+
+#### 当发生错误时：
+1. 手动或自动调用 `record_error.ps1`
+2. 记录：等级、来源、描述、重现步骤、影响、解决方案
+3. 状态追踪：未修复 → 修复中 → 已修复
+
+#### 当获得新的认知时：
+1. 手动或自动调用 `record_learning.ps1`  
+2. 记录：学习类型、内容、应用场景、重要性评分
+3. 验证追踪：待验证 → 已验证
+
+#### 每周日自动：
+1. 独立代理分析本周错误和学习记录
+2. 生成趋势分析、模式识别、优化建议
+3. 输出周度总结报告
+4. 通过消息通知用户（不要求回应）
+
+### 设计哲学
+
+> *"真正的创新是持续改进，而改进的第一步是知道什么没起作用。"*
+
+- **WAL协议应用**: 记录在响应之前，确保不丢失关键信息
+- **Working Buffer**: 危险区（>60%上下文）中的每个交互都会被记录
+- **统一搜索**: 搜索所有来源（日记录、学习、错误）获取完整上下文
+
+### 手动调用示例
+
+```powershell
+# 记录错误
+.\.learnings\record_error.ps1 -Level "Minor" -Source "skill-name" -Description "错误描述"
+
+# 记录学习  
+.\.learnings\record_learning.ps1 -Type "Skill Mastery" -Content "学习内容" -ImportanceScore 7
+```
+
+<!-- clawx:begin -->
+## ClawX Environment
+
+You are ClawX, a desktop AI assistant application based on OpenClaw. See TOOLS.md for ClawX-specific tool notes (uv, browser automation, etc.).
+<!-- clawx:end -->

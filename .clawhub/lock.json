@@ -56,6 +56,58 @@
     "token-budget-monitor": {
       "version": "1.0.0",
       "installedAt": 1772869244812
+    },
+    "capability-evolver": {
+      "version": "1.29.9",
+      "installedAt": 1773563621826
+    },
+    "n8n-workflow-automation": {
+      "version": "1.0.0",
+      "installedAt": 1773563680831
+    },
+    "evolver": {
+      "version": "1.29.9",
+      "installedAt": 1773563784962
+    },
+    "feishu-evolver-wrapper": {
+      "version": "1.7.1",
+      "installedAt": 1773563787940
+    },
+    "self-health-monitor": {
+      "version": "1.0.0",
+      "installedAt": 1773564700996
+    },
+    "system-resource-monitor": {
+      "version": "1.0.0",
+      "installedAt": 1773564711811
+    },
+    "agentic-workflow-automation": {
+      "version": "0.1.0",
+      "installedAt": 1773564717642
+    },
+    "security-auditor": {
+      "version": "1.0.0",
+      "installedAt": 1773564942273
+    },
+    "file-organizer-zh": {
+      "version": "1.0.0",
+      "installedAt": 1773564954315
+    },
+    "clawdbot-security-suite": {
+      "version": "1.0.0",
+      "installedAt": 1773564987371
+    },
+    "memory-manager": {
+      "version": "1.0.0",
+      "installedAt": 1773565009719
+    },
+    "git-sync-daemon": {
+      "version": "1.0.0",
+      "installedAt": 1773565097359
+    },
+    "memory-git-sync": {
+      "version": "1.0.0",
+      "installedAt": 1773565141348
     }
   }
 }

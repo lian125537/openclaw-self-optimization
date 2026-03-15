@@ -1,0 +1,366 @@
+name: Auto Install Skills (Parallel Optimized)
+
+on:
+  workflow_dispatch:  # 手动触发
+  schedule:
+    # 智能调度：根据历史数据优化触发时间
+    - cron: '0 18 * * 1,4'
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/auto-install.yml'
+      - 'scripts/**'
+      - 'config/**'
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
+
+# 环境变量配置
+env:
+  PIP_CACHE_DIR: ${{ github.workspace }}/.cache/pip
+  NPM_CONFIG_CACHE: ${{ github.workspace }}/.cache/npm
+  PARALLEL_JOBS: 4  # 并行作业数，根据 runner 配置调整
+  MAX_RETRIES: 3
+  TIMEOUT_PER_SKILL: 120  # 每个技能超时时间（秒）
+
+jobs:
+  # 第一阶段：环境准备和依赖安装（串行）
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      cache_key: ${{ steps.generate-cache-key.outputs.key }}
+      environment_ready: ${{ steps.verify-environment.outputs.ready }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取完整历史，用于智能分析
+        
+    - name: Generate smart cache key
+      id: generate-cache-key
+      run: |
+        # 基于文件哈希和配置生成智能缓存键
+        echo "key=${{ github.sha }}-${{ hashFiles('config/install-config.yaml', 'scripts/optimized-auto-install.py') }}" >> $GITHUB_OUTPUT
+        
+    - name: Cache Python dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PIP_CACHE_DIR }}
+        key: ${{ runner.os }}-pip-${{ steps.generate-cache-key.outputs.key }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Cache Node.js dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.NPM_CONFIG_CACHE }}
+        key: ${{ runner.os }}-npm-${{ steps.generate-cache-key.outputs.key }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+    
+    - name: Setup Node.js with smart caching
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+        
+    - name: Setup Python with smart caching
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml requests aiohttp  # 添加异步支持
+        
+    - name: Install ClawHub CLI (optimized)
+      id: install-clawhub
+      run: |
+        echo "Installing ClawHub CLI with parallel support..."
+        
+        # 并行安装支持
+        npm install -g clawhub@latest || echo "npm install failed"
+        npx clawhub@latest --version && echo "npx available" || echo "npx not available"
+        
+        # 验证安装
+        if command -v clawhub &> /dev/null; then
+          echo "clawhub_installed=true" >> $GITHUB_OUTPUT
+          echo "method=npm" >> $GITHUB_OUTPUT
+        elif npx --version &> /dev/null; then
+          echo "clawhub_installed=true" >> $GITHUB_OUTPUT
+          echo "method=npx" >> $GITHUB_OUTPUT
+        else
+          echo "clawhub_installed=false" >> $GITHUB_OUTPUT
+          echo "method=none" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Verify environment
+      id: verify-environment
+      run: |
+        # 检查环境是否就绪
+        if [ "${{ steps.install-clawhub.outputs.clawhub_installed }}" = "true" ] && \
+           [ -f "config/install-config.yaml" ] && \
+           [ -f "scripts/optimized-auto-install.py" ]; then
+          echo "ready=true" >> $GITHUB_OUTPUT
+          echo "Environment verification passed"
+        else
+          echo "ready=false" >> $GITHUB_OUTPUT
+          echo "Environment verification failed"
+        fi
+  
+  # 第二阶段：并行技能安装
+  install-skills:
+    needs: setup
+    if: needs.setup.outputs.environment_ready == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 动态生成技能分组，支持并行安装
+        group: [1, 2, 3, 4]
+      max-parallel: ${{ env.PARALLEL_JOBS }}
+      fail-fast: false  # 一个组失败不影响其他组
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Restore Python cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PIP_CACHE_DIR }}
+        key: ${{ runner.os }}-pip-${{ needs.setup.outputs.cache_key }}
+        
+    - name: Restore Node.js cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.NPM_CONFIG_CACHE }}
+        key: ${{ runner.os }}-npm-${{ needs.setup.outputs.cache_key }}
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Determine skill group
+      id: skill-group
+      run: |
+        # 读取配置，动态分配技能到不同组
+        python scripts/skill-grouper.py --group ${{ matrix.group }} --total-groups 4
+        
+    - name: Install skill group in parallel
+      id: install-group
+      run: |
+        # 并行安装本组技能
+        python scripts/parallel-installer.py \
+          --group ${{ steps.skill-group.outputs.group_name }} \
+          --skills "${{ steps.skill-group.outputs.skills }}" \
+          --timeout ${{ env.TIMEOUT_PER_SKILL }} \
+          --retries ${{ env.MAX_RETRIES }}
+        
+    - name: Upload group results
+      uses: actions/upload-artifact@v4
+      with:
+        name: install-results-group-${{ matrix.group }}
+        path: |
+          data/group-${{ matrix.group }}-results.json
+          logs/group-${{ matrix.group }}.log
+        retention-days: 7
+        if-no-files-found: warn
+  
+  # 第三阶段：结果聚合和分析
+  aggregate-results:
+    needs: [setup, install-skills]
+    runs-on: ubuntu-latest
+    if: always()  # 即使部分失败也执行
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download all group results
+      run: |
+        # 下载所有组的执行结果
+        mkdir -p aggregated-results
+        for i in {1..4}; do
+          if [ -f "install-results-group-$i/group-$i-results.json" ]; then
+            cp "install-results-group-$i/group-$i-results.json" "aggregated-results/"
+          fi
+        done
+        
+    - name: Aggregate and analyze results
+      id: aggregate
+      run: |
+        # 聚合所有组的结果，生成综合报告
+        python scripts/results-aggregator.py \
+          --input-dir aggregated-results \
+          --output-file data/final-report.json
+        
+    - name: Generate performance insights
+      id: insights
+      run: |
+        # 分析性能数据，提供优化建议
+        python scripts/performance-analyzer.py \
+          --report data/final-report.json \
+          --output insights/performance-insights.md
+        
+    - name: Upload final report
+      uses: actions/upload-artifact@v4
+      with:
+        name: final-install-report
+        path: |
+          data/final-report.json
+          docs/install-report.md
+          insights/performance-insights.md
+        retention-days: 14
+        if-no-files-found: warn
+        
+    - name: Create smart GitHub Issue
+      if: success()
+      uses: actions/github-script@v7
+      env:
+        SUCCESS_RATE: ${{ steps.aggregate.outputs.success_rate }}
+        TOTAL_TIME: ${{ steps.aggregate.outputs.total_time }}
+        PARALLEL_EFFICIENCY: ${{ steps.insights.outputs.parallel_efficiency }}
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          try {
+            const reportPath = 'docs/install-report.md';
+            const insightsPath = 'insights/performance-insights.md';
+            
+            let reportContent = '## 并行安装执行报告\n\n';
+            reportContent += `**执行时间**: ${new Date().toISOString()}\n`;
+            reportContent += `**成功率**: ${process.env.SUCCESS_RATE || 'N/A'}%\n`;
+            reportContent += `**总耗时**: ${process.env.TOTAL_TIME || 'N/A'}秒\n`;
+            reportContent += `**并行效率**: ${process.env.PARALLEL_EFFICIENCY || 'N/A'}%\n\n`;
+            
+            if (fs.existsSync(reportPath)) {
+              reportContent += fs.readFileSync(reportPath, 'utf8');
+            }
+            
+            if (fs.existsSync(insightsPath)) {
+              reportContent += '\n\n## 性能洞察\n\n';
+              reportContent += fs.readFileSync(insightsPath, 'utf8');
+            }
+            
+            // 智能标签选择
+            const labels = ['auto-install', 'parallel', 'report'];
+            if (parseFloat(process.env.SUCCESS_RATE) >= 95) {
+              labels.push('success-high');
+            } else if (parseFloat(process.env.SUCCESS_RATE) >= 80) {
+              labels.push('success-medium');
+            } else {
+              labels.push('needs-attention');
+            }
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `并行技能安装报告 - ${new Date().toISOString().split('T')[0]}`,
+              body: reportContent,
+              labels: labels
+            });
+            
+            console.log('Smart issue created with labels:', labels);
+          } catch (error) {
+            console.log('Error creating issue:', error.message);
+          }
+          
+    - name: Update performance metrics
+      run: |
+        # 更新性能指标数据库
+        python scripts/metrics-updater.py \
+          --report data/final-report.json \
+          --metrics-db data/performance-metrics.db
+        
+    - name: Generate optimization recommendations
+      if: always()
+      run: |
+        # 基于历史数据生成优化建议
+        python scripts/optimization-recommender.py \
+          --metrics-db data/performance-metrics.db \
+          --output recommendations/next-optimizations.md
+        
+    - name: Send intelligent notification
+      if: always()
+      run: |
+        echo "=== 并行安装执行报告 ==="
+        echo "工作流: ${{ github.workflow }}"
+        echo "运行ID: ${{ github.run_id }}"
+        echo "并行组数: ${{ env.PARALLEL_JOBS }}"
+        echo "触发方式: ${{ github.event_name }}"
+        
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "✅ 并行技能安装完成！"
+          echo "📊 成功率: ${{ steps.aggregate.outputs.success_rate }}%"
+          echo "⏱️  总耗时: ${{ steps.aggregate.outputs.total_time }}秒"
+          echo "🚀 并行效率: ${{ steps.insights.outputs.parallel_efficiency }}%"
+        else
+          echo "❌ 安装执行遇到问题"
+          echo "🔍 请检查错误日志和 Artifacts"
+          echo "💡 优化建议已生成: recommendations/next-optimizations.md"
+        fi
+        
+    - name: Upload failure analysis
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failure-analysis-${{ github.run_id }}
+        path: |
+          aggregated-results/
+          logs/
+          insights/
+          recommendations/
+        retention-days: 30
+        if-no-files-found: warn
+        
+    - name: Cleanup and cache optimization
+      if: always()
+      run: |
+        # 智能缓存清理和优化
+        echo "Optimizing cache for next run..."
+        python scripts/cache-optimizer.py \
+          --cache-dir .cache \
+          --max-age 604800  # 保留7天
+        
+  # 第四阶段：预测性维护（可选）
+  predictive-maintenance:
+    needs: aggregate-results
+    if: success() && github.event_name == 'schedule'  # 仅定时触发时运行
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run predictive analysis
+      run: |
+        # 预测性分析，提前发现问题
+        python scripts/predictive-analyzer.py \
+          --metrics-db data/performance-metrics.db \
+          --output predictions/maintenance-predictions.md
+        
+    - name: Schedule next optimal run
+      run: |
+        # 基于历史数据智能调度下次运行时间
+        python scripts/smart-scheduler.py \
+          --metrics-db data/performance-metrics.db \
+          --output schedule/next-run-schedule.json
+        
+    - name: Upload predictive insights
+      uses: actions/upload-artifact@v4
+      with:
+        name: predictive-insights-${{ github.run_id }}
+        path: |
+          predictions/
+          schedule/
+        retention-days: 30
+        if-no-files-found: warn

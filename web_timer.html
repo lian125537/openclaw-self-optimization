@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>88任务进度监控</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .task-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .task-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .task-status {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+            color: #333;
+            z-index: 1;
+        }
+        
+        .time-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .time-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .time-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .log-container {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .log-time {
+            color: #666;
+            margin-right: 10px;
+        }
+        
+        .log-message {
+            color: #333;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-stop {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-refresh {
+            background: #2196F3;
+            color: white;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="emoji">👨💻</span> 88任务进度监控</h1>
+            <div class="subtitle">实时显示任务执行进度和倒计时</div>
+        </div>
+        
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-name" id="currentTask">等待任务开始</div>
+                <div class="task-status" id="taskStatus">就绪</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+            </div>
+            
+            <div class="time-info">
+                <div class="time-box">
+                    <div class="time-label">已用时间</div>
+                    <div class="time-value" id="elapsedTime">0秒</div>
+                </div>
+                <div class="time-box">
+                    <div class="time-label">剩余时间</div>
+                    <div class="time-value" id="remainingTime">0秒</div>
+                </div>
+                <div class="time-box">
+                    <div class="time-label">预计完成</div>
+                    <div class="time-value" id="estimatedComplete">--:--:--</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log-container" id="logContainer">
+            <div class="log-entry">
+                <span class="log-time">[系统]</span>
+                <span class="log-message">任务监控系统已启动</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn-start" onclick="startTask()">开始新任务</button>
+            <button class="btn-stop" onclick="stopTask()">停止任务</button>
+            <button class="btn-refresh" onclick="refreshData()">刷新数据</button>
+        </div>
+    </div>
+
+    <script>
+        let taskInterval;
+        let startTime;
+        let totalSeconds = 60;
+        let currentProgress = 0;
+        
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', {hour12: false});
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">[${timeStr}]</span>
+                <span class="log-message">${message}</span>
+            `;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function updateProgress(progress) {
+            currentProgress = progress;
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `${progress}%`;
+            
+            // 更新时间和状态
+            if (startTime) {
+                const now = new Date();
+                const elapsed = Math.floor((now - startTime) / 1000);
+                const remaining = Math.max(0, totalSeconds - elapsed);
+                
+                document.getElementById('elapsedTime').textContent = `${elapsed}秒`;
+                document.getElementById('remainingTime').textContent = `${remaining}秒`;
+                
+                if (remaining > 0) {
+                    const completeTime = new Date(startTime.getTime() + totalSeconds * 1000);
+                    document.getElementById('estimatedComplete').textContent = 
+                        completeTime.toLocaleTimeString('zh-CN', {hour12: false});
+                }
+            }
+        }
+        
+        function startTask() {
+            if (taskInterval) {
+                clearInterval(taskInterval);
+            }
+            
+            // 模拟任务
+            startTime = new Date();
+            totalSeconds = 60;
+            currentProgress = 0;
+            
+            document.getElementById('currentTask').textContent = '系统优化任务';
+            document.getElementById('taskStatus').textContent = '进行中';
+            document.getElementById('taskStatus').style.background = '#4CAF50';
+            
+            addLog('任务开始：系统优化');
+            
+            taskInterval = setInterval(() => {
+                if (currentProgress < 100) {
+                    // 模拟进度增加
+                    const increment = Math.random() * 3 + 1;
+                    currentProgress = Math.min(100, currentProgress + increment);
+                    updateProgress(Math.round(currentProgress));
+                    
+                    // 模拟日志更新
+                    if (Math.random() > 0.7) {
+                        const messages = [
+                            '清理临时文件...',
+                            '优化网络设置...',
+                            '检查系统资源...',
+                            '更新配置信息...',
+                            '监控网络连接...'
+                        ];
+                        addLog(messages[Math.floor(Math.random() * messages.length)]);
+                    }
+                } else {
+                    clearInterval(taskInterval);
+                    document.getElementById('taskStatus').textContent = '已完成';
+                    addLog('✅ 任务完成！');
+                }
+            }, 500);
+        }
+        
+        function stopTask() {
+            if (taskInterval) {
+                clearInterval(taskInterval);
+                taskInterval = null;
+                document.getElementById('taskStatus').textContent = '已停止';
+                document.getElementById('taskStatus').style.background = '#f44336';
+                addLog('任务已手动停止');
+            }
+        }
+        
+        function refreshData() {
+            addLog('刷新监控数据...');
+            // 这里可以添加实际的数据刷新逻辑
+        }
+        
+        // 初始化
+        updateProgress(0);
+        addLog('系统准备就绪');
+    </script>
+</body>
+</html>
