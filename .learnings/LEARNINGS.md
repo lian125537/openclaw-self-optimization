@@ -105,6 +105,37 @@
 **总结日期**: 2026-03-22 (周日)
 **总结内容**: [此处填写]
 
+---
+
+### 🔧 学习类型: 系统配置 + 工具精通
+**获取日期**: 2026-03-15
+**来源**: 用户指令 + 实际故障排查
+
+**学习内容**:
+1. **JSON配置修复**: openclaw.json 中 plugins.slots 格式错误导致 SyntaxError at line 156/159。问题根源是缩进错误导致 JSON 对象提前闭合。
+2. **lossless-claw配置**: 该插件不支持 config.compression 格式 - 它使用默认压缩配置。配置额外的 config 会导致 "must NOT have additional properties" 错误。
+3. **Token监控系统**: 编写 token-monitor.ps1 脚本，每5分钟检测上下文使用率，阈值80%告警。
+
+**应用场景**:
+1. 排查 OpenClaw 配置错误
+2. 正确配置插件（需查阅官方 schema）
+3. 部署 token 消耗监控
+
+**验证状态**: [x] 已验证 ✅
+
+**预期收益**:
+1. 预防配置错误导致的服务中断
+2. 正确使用 lossless-claw 省 token
+3. 及时发现 token 异常消耗
+
+**行动计划**:
+1. [已完成] 修复 openclaw.json 语法错误 ✅
+2. [已完成] 清理无效插件配置 ✅
+3. [已完成] 部署 token 监控 cron ✅
+
+**重要性评分**: 8/10
+
+---
 
 ## 🎯 学习类型: Skill Mastery
 **获取日期**: 2026-03-15 14:51

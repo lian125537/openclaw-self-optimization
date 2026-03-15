@@ -81,3 +81,53 @@
 **修复验证**: 
 
 ---
+
+### 错误ID: ERR-20260315-002
+**日期**: 2026-03-15 22:31
+**等级**: 🔴
+**来源**: openclaw.json / plugins
+**类型**: Configuration Syntax Error
+
+**描述**: JSON 语法错误 - plugins.slots 格式错误导致 SyntaxError at line 156/159
+
+**重现步骤**:
+1. openclaw doctor
+2. 输出: SyntaxError: JSON5: invalid end of input at 156:2
+**影响**: Config 无效，部分功能异常
+
+**根本原因**: 缩进错误导致 JSON 对象提前闭合，多余的 `}`
+
+**临时解决方案**: 清理 plugins 配置为空对象
+
+**永久解决方案**: 修复缩进，保持正确的 JSON 结构
+
+**状态**: 🟢已修复
+**修复日期**: 2026-03-15
+**修复验证**: openclaw doctor 通过，Config valid
+
+---
+
+### 错误ID: ERR-20260315-003
+**日期**: 2026-03-15 22:42
+**等级**: 🟡
+**来源**: lossless-claw plugin
+**类型**: Configuration Schema Error
+
+**描述**: 插件不接受 config.compression 格式 - "must NOT have additional properties"
+
+**重现步骤**:
+1. 在 plugins.entries.lossless-claw.config 添加 compression 配置
+2. openclaw doctor 报错
+**影响**: 插件配置无效
+
+**根本原因**: lossless-claw 不支持该配置格式，使用默认配置即可
+
+**临时解决方案**: 移除自定义配置，使用插件默认压缩设置
+
+**永久解决方案**: 查阅插件官方 schema，确认支持的配置项
+
+**状态**: 🟢已修复
+**修复日期**: 2026-03-15
+**修复验证**: openclaw doctor 通过，lossless-claw 正常运行
+
+---
