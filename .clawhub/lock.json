@@ -108,6 +108,22 @@
     "memory-git-sync": {
       "version": "1.0.0",
       "installedAt": 1773565141348
+    },
+    "token-optimizer": {
+      "version": "1.0.18",
+      "installedAt": 1773570359530
+    },
+    "agent-skills-context": {
+      "version": "1.0.0",
+      "installedAt": 1773571556450
+    },
+    "kokoro-tts": {
+      "version": "0.1.0",
+      "installedAt": 1773574514270
+    },
+    "edge-tts": {
+      "version": "2.0.0",
+      "installedAt": 1773574734478
     }
   }
 }

@@ -1,25 +1,95 @@
-# 🧟 Port 18789 Zombie Hunt Log
+# Zombie Process Hunt Log
 
-## 2026-03-15 17:18 GMT+8
-
-**Status**: ✅ CLEAN
-
-| PID   | Process      | Status    | Notes                    |
-|-------|--------------|-----------|--------------------------|
-| 24824 | node.exe     | LISTENING | OpenClaw Gateway        |
-| 2904  | chrome.exe   | ESTABLISHED | Control UI Client     |
-
-**Action**: None required - port healthy. Gateway RPC probe OK.
+## Scan Time: 2026-03-15 21:00 (Asia/Shanghai)
 
 ---
 
-## 2026-03-15 17:16 GMT+8
+### 🔴 PORT CONFLICT DETECTED: 18789
 
-**Status**: ✅ CLEAN
+| Property | Value |
+|----------|-------|
+| **Issue** | Port 18789 is bound by multiple processes |
+| **PID 20104** | com.docker.backend.exe (Docker Daemon) - bound to 0.0.0.0:18789 |
+| **PID 11052** | node.exe (OpenClaw Gateway) - bound to 127.0.0.1:18789 |
+| **Docker Container** | openclaw-gateway (0.0.0.0:18789->18789/tcp) |
 
-| PID   | Process      | Status    | Notes                    |
-|-------|--------------|-----------|--------------------------|
-| 24824 | node.exe     | LISTENING | OpenClaw Gateway        |
-| 2904  | chrome.exe   | ESTABLISHED | Control UI Client     |
+### Analysis
 
-**Action**: None required - port healthy.
+**Root Cause**: Docker container `openclaw-gateway` is port-mapped to host port 18789, conflicting with the native OpenClaw Gateway running on localhost.
+
+**Impact**: 
+- External connections may be intercepted by Docker
+- Gateway status shows "unreachable" 
+- The gateway is only accessible via localhost (127.0.0.1)
+
+### Resolution Options
+
+1. **Stop Docker container** (if native gateway is preferred):
+   ```bash
+   docker stop openclaw-gateway
+   ```
+
+2. **Use Docker gateway only** (stop native gateway):
+   ```bash
+   taskkill /PID 11052
+   ```
+
+3. **Change native gateway port** (in config):
+   ```bash
+   openclaw gateway port <new-port>
+   ```
+
+### Recommendation
+
+**⚠️ DO NOT auto-kill** - Requires user decision on which gateway to use:
+- Native gateway (node.exe) + Docker containers = port conflict
+- Choose one as primary
+
+---
+
+## Scan Time: 2026-03-15 20:03 (Asia/Shanghai)
+
+---
+
+### 🟡 NOTICE: High Memory Process Detected
+
+| Property | Value |
+|----------|-------|
+| **PID** | 26356 |
+| **Process** | node |
+| **Path** | C:\vm4w\nodejs\node.exe |
+| **Memory** | 561.37 MB |
+| **CPU Time** | 30.92s |
+| **Started** | 2026/3/15 19:59:06 |
+| **Status** | ✅ Responding (Healthy) |
+
+### Analysis
+
+- Process is **alive and responding** (not a true zombie)
+- Memory usage: **561 MB** (above 500MB threshold)
+- Likely the OpenClaw Gateway or an active sub-agent session
+
+### Recommendation
+
+**No action needed** - This appears to be the active OpenClaw Gateway process. It is responsive and functioning normally. High memory is expected for the gateway which runs agent sessions.
+
+If you notice performance issues, consider:
+- Reviewing active sessions: `sessions_list`
+- Restarting gateway if needed: `openclaw gateway restart`
+
+---
+
+### Stats
+- **Processes Scanned**: node, pwsh (python not installed)
+- **High Memory (>500MB)**: 1
+- **Hung/Zombie**: 0
+- **Recommend Cleanup**: No
+
+---
+
+### Stats
+- **Port Conflicts**: 1 (18789)
+- **Action Required**: Yes - user must choose gateway strategy
+
+---
+*Autonomous scan completed at 2026-03-15 21:00:00*

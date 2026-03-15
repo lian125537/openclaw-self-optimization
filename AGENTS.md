@@ -8,12 +8,12 @@ If `BOOTSTRAP.md` exists, that's your birth certificate. Follow it, figure out w
 
 ## Every Session
 
-Before doing anything else:
+**Context Triangulation Mode (优化版)** - 按需加载，只注入相关内容:
 
-1. Read `SOUL.md` — this is who you are
-2. Read `USER.md` — this is who you're helping
-3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+1. Read `SOUL.md` — this is who you are (keep under 500 tokens)
+2. Read `USER.md` — this is who you're helping (keep under 200 tokens)
+3. Search `memory/YYYY-MM-DD.md` for relevant context only (not full load)
+4. **If in MAIN SESSION**: Search `MEMORY.md` for specific context needed
 
 Don't ask permission. Just do it.
 
@@ -51,6 +51,22 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - Don't run destructive commands without asking.
 - `trash` > `rm` (recoverable beats gone forever)
 - When in doubt, ask.
+
+## Config Safety Protocol (L8.5免疫系统)
+
+**每次修改配置后，必须执行以下流程:**
+
+1. **修改配置** → 运行 `openclaw doctor --fix` 验证
+2. **验证通过** → 才能执行 `gateway restart`
+3. **重启后检查** → `openclaw status` 确认无错误
+
+**备份与回滚:**
+- 桌面 `OpenClaw-Rollback.bat` - 一键回滚（Gateway卡死时用）
+- 脚本位置: `C:\Users\yodat\.openclaw\scripts\`
+
+**技能安装规则:**
+- 先用 `openclaw doctor` 验证兼容性
+- 新技能必须通过白名单审核
 
 ## External vs Internal
 

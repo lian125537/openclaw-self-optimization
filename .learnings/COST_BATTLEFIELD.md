@@ -2,6 +2,24 @@
 
 ## 2026-03-15 检查记录
 
+### 18:25 (Cost Control Guard)
+- **状态**: ✅ 正常
+- **Token消耗**: ~22.7k (input: 56, output: 1.1k, cacheRead: 19.9k)
+- **成本**: $0.00
+- **Cache命中率**: 95%
+- **Context**: 11% (23k/200k) - 主会话
+- **活跃会话**: Cost Control Guard cron (本身)
+- **备注**: ⚠️ 注意：本次token消耗较历史记录(~2k)激增10倍，主要来自cacheRead(19.9k)。相关记忆检索上下文增大。未超阈值(100k)，继续观察。
+
+### 17:50 (Cost Control Guard)
+- **状态**: ✅ 正常
+- **Token消耗**: ~1.9k (input: 1.2k, output: 675)
+- **成本**: $0.00
+- **Cache命中率**: 97%
+- **Context**: 10% (20k/200k)
+- **活跃会话**: 仅cron自身
+- **备注**: 无异常，无循环，正常运行
+
 ### 16:50 (Cost Control Guard)
 - **状态**: ✅ 正常
 - **Token消耗**: ~2k (input: 829, output: 253)
