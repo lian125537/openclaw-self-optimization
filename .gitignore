@@ -19,3 +19,4 @@ backup_*/
 *.tmp
 node_modules/
 
+openclaw.json
