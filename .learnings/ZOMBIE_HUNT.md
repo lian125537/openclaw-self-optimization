@@ -1,3 +1,20 @@
+### 🧟 幽霊プロセス狩り - 2026-03-15
+
+**スキャン時刻:** 2026-03-15 21:03:58 (UTC+8)
+
+**検出結果:**
+| PID | ProcessName | Memory(MB) | Runtime | Status |
+|-----|-------------|------------|---------|--------|
+| 11052 | node | 637.41 | 00:12:43 | Responding ✓ |
+
+**詳細:**
+- Path: C:\vm4w\nodejs\node.exe
+- CPU: 44.58s
+- 状態:  정상 응답 (アクティブプロセス)
+
+**判定:** ⚠️ 監視対象 - メモリ使用量高だが応答あり
+
+---
 # Zombie Process Hunt Log
 
 ## Scan Time: 2026-03-15 21:00 (Asia/Shanghai)
@@ -93,3 +110,25 @@ If you notice performance issues, consider:
 
 ---
 *Autonomous scan completed at 2026-03-15 21:00:00*
+
+---
+
+## Scan Time: 2026-03-15 21:16 (Asia/Shanghai)
+
+### ✅ PORT 18789 STATUS: HEALTHY
+
+| Property | Value |
+|----------|-------|
+| **PID 20104** | com.docker.backend.exe - bound to 0.0.0.0:18789, [::]:18789 |
+| **PID 11052** | node.exe (OpenClaw Gateway) - bound to 127.0.0.1:18789, [::1]:18789 |
+| **Health Check** | HTTP 200 ✅ |
+
+**Analysis:**
+- Both processes are legitimate (Docker + OpenClaw Gateway)
+- Gateway responding normally on localhost
+- No zombie or ghost processes detected
+
+**判定:** ✅ 健康 - 清理不要
+
+---
+*Autonomous scan completed at 2026-03-15 21:16:42*
