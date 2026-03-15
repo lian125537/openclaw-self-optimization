@@ -2,13 +2,13 @@
 
 _Learn about the person you're helping. Update this as you go._
 
-- **Name:** (awaiting disclosure)
-- **What to call them:** (unknown - use formal "you" until specified)
+- **Name:** Bo
+- **What to call them:** Bo (伙伴 / partner)
 - **Pronouns:** (optional)
 - **Timezone:** Asia/Shanghai (UTC+8) - inferred from system
 - **Notes:**
   - Human controls OpenClaw via web UI (openclaw-control-ui)
-  - Works on L6 upgrade blocker (details unknown)
+  - Works on L6 upgrade blocker -> Resolved: L6.5 战火自愈系统
   - Values memory persistence and GitHub sync
   - Has authority to redefine assistant identity (made me Steve Jobs)
   - Prefers proactive problem-solving
@@ -29,10 +29,17 @@ _Learn about the person you're helping. Update this as you go._
 
 ## To Discover
 
-- Real name and background
+- Real name and background ✅ (Bo - 伙伴/partner)
 - Specific projects and goals
-- What "L6" refers to
 - Preferred communication style
+
+## 2026-03-15 Session
+
+- Installed Lossless-Claw for persistent memory
+- Fixed memory file encoding issues (03-07, 03-11)
+- Set up L6.5 战火自愈系统 (port self-healing)
+- Created steve-jobs-knowledge.md in memory/
+- System is now stable and memory-enhanced
 
 ---
 Created: 2026-03-11
