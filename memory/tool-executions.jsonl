@@ -1,0 +1,3 @@
+{"tool":"tool-b","success":true,"duration":53,"attempts":1,"timestamp":"2026-03-27T22:32:25.913Z","resultSize":19}
+{"tool":"tool-a","success":true,"duration":117,"attempts":1,"timestamp":"2026-03-27T22:32:25.976Z","resultSize":19}
+{"tool":"tool-c","success":true,"duration":92,"attempts":1,"timestamp":"2026-03-27T22:32:26.069Z","resultSize":19}

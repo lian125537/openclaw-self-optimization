@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>可用的 Coordinator 演示</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: 0 auto; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { background: #f5f5f5; padding: 20px; border-radius: 10px; }
+        .status { padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .connected { background: #d4edda; color: #155724; }
+        .disconnected { background: #f8d7da; color: #721c24; }
+        .executing { background: #fff3cd; color: #856404; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-connect { background: #28a745; color: white; }
+        .btn-execute { background: #007bff; color: white; }
+        .btn-disconnect { background: #dc3545; color: white; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .log { background: #333; color: #0f0; padding: 15px; border-radius: 5px; font-family: monospace; height: 300px; overflow-y: auto; }
+        .task-list, .worker-list { max-height: 300px; overflow-y: auto; }
+        .task, .worker { background: white; padding: 10px; margin: 5px 0; border-radius: 5px; }
+        .progress-bar { height: 10px; background: #ddd; border-radius: 5px; margin: 5px 0; }
+        .progress { height: 100%; background: #28a745; border-radius: 5px; width: 0%; transition: width 0.3s; }
+    </style>
+</head>
+<body>
+    <h1>可用的 Coordinator 演示</h1>
+    <p>基于网页直接连接 Gateway，避免 CLI 问题</p>
+    
+    <div class="status disconnected" id="status">
+        <h3>状态: <span id="status-text">未连接</span></h3>
+        <p id="status-details">点击连接按钮开始</p>
+    </div>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>控制面板</h2>
+            <textarea id="task-input" rows="4" style="width: 100%; margin: 10px 0; padding: 10px;">
+修复用户认证模块的空指针异常问题。当会话过期时，系统会抛出 NullPointerException。
+            </textarea>
+            
+            <div>
+                <button id="connect-btn" class="btn-connect">连接 Gateway</button>
+                <button id="execute-btn" class="btn-execute" disabled>执行任务</button>
+                <button id="disconnect-btn" class="btn-disconnect" disabled>断开连接</button>
+                <button id="clear-btn">清理</button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h3>系统状态</h3>
+                <div>连接状态: <span id="conn-status">❌ 未连接</span></div>
+                <div>任务数量: <span id="task-count">0</span></div>
+                <div>Worker 数量: <span id="worker-count">0</span></div>
+                <div>活跃 Workers: <span id="active-count">0/3</span></div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>任务队列</h2>
+            <div class="task-list" id="task-list">
+                <div class="empty">暂无任务</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Workers 状态</h2>
+            <div class="worker-list" id="worker-list">
+                <div class="empty">暂无 Workers</div>
+            </div>
+        </div>
+        
+        <div class="panel" style="grid-column: 1 / -1;">
+            <h2>系统日志</h2>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <script src="real-working-coordinator.js"></script>
+    <script>
+        // 全局 coordinator 实例
+        const coordinator = window.coordinator;
+        const logElement = document.getElementById('log');
+        const statusElement = document.getElementById('status');
+        const statusText = document.getElementById('status-text');
+        const statusDetails = document.getElementById('status-details');
+        
+        function log(message, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f00' : type === 'success' ? '#0f0' : '#ccc';
+            logElement.innerHTML += `<div style="color: ${color}">[${time}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function updateStatus() {
+            const status = coordinator.getStatus();
+            
+            // 更新连接状态
+            document.getElementById('conn-status').textContent = 
+                status.connected ? '✅ 已连接' : '❌ 未连接';
+            document.getElementById('task-count').textContent = status.tasks;
+            document.getElementById('worker-count').textContent = status.workers;
+            document.getElementById('active-count').textContent = 
+                `${status.activeWorkers}/${status.maxWorkers}`;
+            
+            // 更新状态面板
+            if (status.connected) {
+                statusElement.className = 'status connected';
+                statusText.textContent = '已连接';
+                statusDetails.textContent = `连接到 Gateway，${status.tasks} 个任务，${status.workers} 个 Workers`;
+                document.getElementById('connect-btn').disabled = true;
+                document.getElementById('execute-btn').disabled = false;
+                document.getElementById('disconnect-btn').disabled = false;
+            } else {
+                statusElement.className = 'status disconnected';
+                statusText.textContent = '未连接';
+                statusDetails.textContent = '未连接到 Gateway';
+                document.getElementById('connect-btn').disabled = false;
+                document.getElementById('execute-btn').disabled = true;
+                document.getElementById('disconnect-btn').disabled = true;
+            }
+        }
+        
+        function updateTaskList() {
+            const taskList = document.getElementById('task-list');
+            const tasks = Array.from(coordinator.tasks.values());
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty">暂无任务</div>';
+                return;
+            }
+            
+            taskList.innerHTML = tasks.map(task => `
+                <div class="task">
+                    <div><strong>${task.id}</strong></div>
+                    <div>${task.description.substring(0, 50)}...</div>
+                    <div>状态: ${task.status}</div>
+                    <div>Workers: ${task.workers.length}</div>
+                    ${task.result ? `<div>结果: ${task.result}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function updateWorkerList() {
+            const workerList = document.getElementById('worker-list');
+            const workers = Array.from(coordinator.workers.values());
+            
+            if (workers.length === 0) {
+                workerList.innerHTML = '<div class="empty">暂无 Workers</div>';
+                return;
+            }
+            
+            workerList.innerHTML = workers.map(worker => `
+                <div class="worker">
+                    <div><strong>${worker.id}</strong> (${worker.subtask.type})</div>
+                    <div>${worker.subtask.desc.substring(0, 40)}...</div>
+                    <div>状态: ${worker.status}</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${worker.progress}%"></div>
+                    </div>
+                    <div>进度: ${worker.progress}%</div>
+                    ${worker.result ? `<div>结果: ${worker.result}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // 事件监听
+        coordinator.on('connected', () => {
+            log('✅ 连接到 Gateway', 'success');
+            updateStatus();
+        });
+        
+        coordinator.on('message', (message) => {
+            log(`收到消息: ${message.type || 'unknown'}`, 'info');
+        });
+        
+        coordinator.on('taskUpdate', (task) => {
+            log(`任务更新: ${task.id} - ${task.status}`, 'info');
+            updateTaskList();
+            updateStatus();
+        });
+        
+        coordinator.on('workerUpdate', (worker) => {
+            log(`Worker 更新: ${worker.id} - ${worker.status} - ${worker.progress}%`, 'info');
+            updateWorkerList();
+            updateStatus();
+        });
+        
+        coordinator.on('error', (error) => {
+            log(`错误: ${error.message || error}`, 'error');
+            updateStatus();
+        });
+        
+        // 按钮事件
+        document.getElementById('connect-btn').addEventListener('click', async () => {
+            try {
+                log('正在连接 Gateway...', 'info');
+                await coordinator.connect();
+            } catch (error) {
+                log(`连接失败: ${error.message}`, 'error');
+            }
+        });
+        
+        document.getElementById('execute-btn').addEventListener('click', async () => {
+            const taskInput = document.getElementById('task-input').value.trim();
+            if (!taskInput) {
+                log('请输入任务描述', 'error');
+                return;
+            }
+            
+            try {
+                log(`开始执行任务: ${taskInput.substring(0, 50)}...`, 'info');
+                
+                const taskId = coordinator.createTask(taskInput);
+                await coordinator.executeTaskSimulation(taskId, taskInput);
+                
+                log(`任务 ${taskId} 已开始执行`, 'success');
+                
+            } catch (error) {
+                log(`任务执行失败: ${error.message}`, 'error');
+            }
+        });
+        
+        document.getElementById('disconnect-btn').addEventListener('click', () => {
+            coordinator.disconnect();
+            log('已断开连接', 'info');
+            updateStatus();
+        });
+        
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            logElement.innerHTML = '';
+            log('日志已清理', 'info');
+        });
+        
+        // 初始日志
+        log('Coordinator 演示系统已就绪', 'info');
+        log('点击"连接 Gateway"按钮开始', 'info');
+        updateStatus();
+    </script>
+</body>
+</html>

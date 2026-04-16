@@ -1,0 +1,33 @@
+{
+  "entries": [],
+  "stats": {
+    "hits": 0,
+    "misses": 2,
+    "totalRequests": 2,
+    "tokensSaved": 0,
+    "costSaved": 0,
+    "exactHits": 0,
+    "prefixHits": 0,
+    "semanticHits": 0,
+    "entriesStored": 2,
+    "entriesEvicted": 0,
+    "sizeRejections": 0,
+    "jsonErrors": 0,
+    "autoRecoverySuccess": 0
+  },
+  "strategyStats": {
+    "ExactMatch": {
+      "hits": 0,
+      "attempts": 4
+    },
+    "PrefixMatch": {
+      "hits": 0,
+      "attempts": 4
+    },
+    "SemanticMatch": {
+      "hits": 0,
+      "attempts": 2
+    }
+  },
+  "lastUpdate": "2026-03-27T21:22:36.807Z"
+}
