@@ -3,6 +3,7 @@
 *.zip
 backup*/
 memory-new-backup/
+backup-temp/
 
 # 日志文件
 logs/
@@ -52,3 +53,29 @@ autonomous_goals.json
 *.mp4
 *.wav
 *.pdf
+
+# 清理临时文件
+cleanup-list.txt
+
+# 开发目录（包含源码）
+skills-dev/
+coordinator/
+data-conversion/
+hooks-prototype/
+hooks/
+scripts/
+src/
+team-collaboration/
+ui-components/
+vcp-implementation/
+
+# 配置文件
+package.json
+package-lock.json
+tsconfig.json
+
+# 聊天记录保持器（运行中）
+chat-history-preserver.js
+
+# 记忆优化文件
+memory-optimization-plan.md
